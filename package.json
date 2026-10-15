@@ -1,11 +1,11 @@
 {
   "name": "autoops-command-center",
   "version": "2.0.0",
-  "description": "JSON-driven n8n automation showcase and interactive operations command center",
-  "main": "server.js",
+  "description": "Production AI and business automation command center",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "build": "echo Static build complete"
   },
   "keywords": [
     "n8n",

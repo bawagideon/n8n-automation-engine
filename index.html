@@ -8,7 +8,1068 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="src/styles.css">
+  <style>
+:root {
+  --bg: #eef0f7;
+  --p: #ffffff;
+  --ink: #12142b;
+  --mut: #646a8c;
+  --ln: #dcdfee;
+  --ac: #4a3cf0;
+  --ac-hover: #3d2fe0;
+  --ac-soft: rgba(74, 60, 240, 0.08);
+  --sg: #ff7a1a;
+  --ok: #0f9d58;
+  --wn: #d97a00;
+  --er: #d6333a;
+  --cd: #0c0f24;
+  --ct: #c9d1ff;
+  --lg: #0c0f24;
+  --lt: #c9d1ff;
+  --card-shadow: 0 2px 8px rgba(18, 20, 43, 0.04);
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #090b1b;
+    --p: #12152f;
+    --ink: #e9ecff;
+    --mut: #8a90b8;
+    --ln: #242a52;
+    --ac: #8d83ff;
+    --ac-hover: #a199ff;
+    --ac-soft: rgba(141, 131, 255, 0.12);
+    --cd: #05070f;
+    --ct: #c9d1ff;
+    --lg: #05070f;
+    --lt: #c9d1ff;
+    --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #090b1b;
+  --p: #12152f;
+  --ink: #e9ecff;
+  --mut: #8a90b8;
+  --ln: #242a52;
+  --ac: #8d83ff;
+  --ac-hover: #a199ff;
+  --ac-soft: rgba(141, 131, 255, 0.12);
+  --cd: #05070f;
+  --ct: #c9d1ff;
+  --lg: #05070f;
+  --lt: #c9d1ff;
+  --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme="light"] {
+  --bg: #eef0f7;
+  --p: #ffffff;
+  --ink: #12142b;
+  --mut: #646a8c;
+  --ln: #dcdfee;
+  --ac: #4a3cf0;
+  --ac-hover: #3d2fe0;
+  --ac-soft: rgba(74, 60, 240, 0.08);
+  --cd: #0c0f24;
+  --ct: #c9d1ff;
+  --lg: #0c0f24;
+  --lt: #c9d1ff;
+  --card-shadow: 0 2px 8px rgba(18, 20, 43, 0.04);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.55 'Space Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Global Navigation & Header */
+header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 20px;
+  background: var(--p);
+  border-bottom: 1px solid var(--ln);
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 50;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-badge {
+  background: linear-gradient(135deg, var(--ac), var(--sg));
+  color: #fff;
+  font-weight: 700;
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+h1 {
+  font-size: 18px;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 15px;
+  margin: 0 0 8px;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 13px;
+  margin: 12px 0 6px;
+  color: var(--mut);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.sp {
+  flex: 1;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  font-size: 12.5px;
+  gap: 6px;
+  background: var(--bg);
+  padding: 4px 10px;
+  border-radius: 99px;
+  border: 1px solid var(--ln);
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ok);
+  display: inline-block;
+  box-shadow: 0 0 0 2px rgba(15, 157, 88, 0.2);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.dot.err {
+  background: var(--er);
+  box-shadow: 0 0 0 2px rgba(214, 51, 58, 0.3);
+  animation: pulse-err 1.2s infinite;
+}
+
+@keyframes pulse-err {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.cov {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.bar {
+  width: 110px;
+  height: 7px;
+  background: var(--ln);
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--ac), var(--sg));
+  transition: width 0.4s ease-out;
+}
+
+/* Action Buttons */
+button, .btn {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--ln);
+  background: var(--p);
+  color: var(--ink);
+  padding: 7px 13px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 500;
+  transition: all 0.15s ease-in-out;
+  text-decoration: none;
+}
+
+button:hover, .btn:hover {
+  background: var(--bg);
+  border-color: var(--mut);
+}
+
+button.pr {
+  background: var(--ac);
+  border-color: var(--ac);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(74, 60, 240, 0.25);
+}
+
+button.pr:hover {
+  background: var(--ac-hover);
+  border-color: var(--ac-hover);
+}
+
+button.ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--mut);
+}
+
+button.ghost:hover {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--ac);
+  outline-offset: 1px;
+}
+
+input, select, textarea {
+  font: inherit;
+  width: 100%;
+  padding: 8px 11px;
+  border: 1px solid var(--ln);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--ink);
+  transition: border-color 0.15s;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--ac);
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  color: var(--mut);
+  margin: 8px 0 4px;
+  font-weight: 500;
+}
+
+/* Navigation Tabs */
+nav#nav {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 10px 20px 0;
+  max-width: 1400px;
+  margin: auto;
+  border-bottom: 1px solid var(--ln);
+}
+
+nav#nav button {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: none;
+  color: var(--mut);
+  white-space: nowrap;
+  padding: 8px 12px;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+nav#nav button:hover {
+  color: var(--ink);
+  background: transparent;
+}
+
+nav#nav button.on {
+  color: var(--ink);
+  border-color: var(--sg);
+  font-weight: 700;
+}
+
+/* Proof Banner */
+.proof-banner {
+  background: linear-gradient(90deg, var(--ac-soft), rgba(255,122,26,0.06));
+  border: 1px solid var(--ln);
+  border-radius: 10px;
+  padding: 8px 16px;
+  margin: 12px auto 0;
+  max-width: 1360px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+}
+
+.proof-banner b {
+  color: var(--ac);
+}
+
+/* Layout Wrap */
+.wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 18px;
+  max-width: 1400px;
+  margin: auto;
+  padding: 14px 20px 32px;
+}
+
+@media (max-width: 980px) {
+  .wrap {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Pipeline Ribbon */
+#pipe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  background: var(--p);
+  border: 1px solid var(--ln);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  min-height: 48px;
+  color: var(--mut);
+  box-shadow: var(--card-shadow);
+}
+
+.pipe-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--mut);
+  margin-right: 6px;
+}
+
+.node {
+  padding: 4px 11px;
+  border-radius: 99px;
+  border: 1px solid var(--ln);
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.25s ease;
+  background: var(--bg);
+}
+
+.node.on {
+  border-color: var(--sg);
+  color: var(--sg);
+  background: #ff7a1a15;
+  box-shadow: 0 0 0 3px rgba(255, 122, 26, 0.25);
+  font-weight: 600;
+}
+
+.node.done {
+  background: var(--ok);
+  border-color: var(--ok);
+  color: #fff;
+  font-weight: 500;
+}
+
+.node.skip {
+  opacity: 0.35;
+  border-style: dashed;
+}
+
+/* Modules / Panels */
+.pn {
+  display: none;
+}
+
+.pn.on {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  align-items: start;
+}
+
+.c {
+  background: var(--p);
+  border: 1px solid var(--ln);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--card-shadow);
+  position: relative;
+  transition: border-color 0.2s;
+}
+
+.c:hover {
+  border-color: rgba(74, 60, 240, 0.2);
+}
+
+.c-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.c .tag {
+  font-size: 12px;
+  color: var(--mut);
+  margin-bottom: 12px;
+}
+
+.btn-inspect {
+  font-size: 11.5px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--ln);
+  background: var(--bg);
+  color: var(--ac);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-inspect:hover {
+  background: var(--ac-soft);
+  border-color: var(--ac);
+}
+
+.out {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--ac);
+  background: var(--bg);
+  border-radius: 0 8px 8px 0;
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.out:empty {
+  display: none;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.row > * {
+  flex: 1;
+}
+
+.row > button {
+  flex: 0 0 auto;
+}
+
+/* File Dropzones */
+#drop, .dropzone {
+  border: 2px dashed var(--ln);
+  border-radius: 12px;
+  padding: 22px;
+  text-align: center;
+  color: var(--mut);
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--bg);
+}
+
+#drop:hover, .dropzone:hover, #drop.h, .dropzone.h {
+  border-color: var(--sg);
+  background: rgba(255, 122, 26, 0.05);
+  color: var(--ink);
+}
+
+.ring {
+  width: 84px;
+  height: 84px;
+  flex: 0 0 84px;
+}
+
+.ring text {
+  font: 700 22px 'Space Grotesk', sans-serif;
+  fill: var(--ink);
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+td, th {
+  padding: 7px 6px;
+  border-bottom: 1px solid var(--ln);
+  text-align: left;
+}
+
+th {
+  color: var(--mut);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.b {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 99px;
+  font-size: 11px;
+  background: var(--bg);
+  border: 1px solid var(--ln);
+  color: var(--mut);
+}
+
+.b.er {
+  color: var(--er);
+  border-color: var(--er);
+  background: rgba(214, 51, 58, 0.08);
+}
+
+.b.ok {
+  color: var(--ok);
+  border-color: var(--ok);
+  background: rgba(15, 157, 88, 0.08);
+}
+
+.b.wn {
+  color: var(--wn);
+  border-color: var(--wn);
+  background: rgba(217, 122, 0, 0.08);
+}
+
+.slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.slots button.on {
+  background: var(--ac);
+  border-color: var(--ac);
+  color: #fff;
+}
+
+/* Chat & Voice */
+#chat {
+  height: 200px;
+  overflow-y: auto;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid var(--ln);
+}
+
+.m {
+  max-width: 85%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--p);
+  border: 1px solid var(--ln);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.m.u {
+  align-self: flex-end;
+  background: var(--ac);
+  color: #fff;
+  border-color: var(--ac);
+  border-bottom-right-radius: 2px;
+}
+
+.vis {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  height: 44px;
+  justify-content: center;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 0 10px;
+  margin-bottom: 10px;
+}
+
+.vis i {
+  width: 5px;
+  height: 6px;
+  background: var(--sg);
+  border-radius: 3px;
+  transition: height 0.15s;
+}
+
+.vis.go i {
+  animation: wave 0.6s infinite ease-in-out alternate;
+}
+
+.vis.go i:nth-child(2n) { animation-delay: 0.15s; }
+.vis.go i:nth-child(3n) { animation-delay: 0.3s; }
+.vis.go i:nth-child(4n) { animation-delay: 0.45s; }
+
+@keyframes wave {
+  to { height: 36px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vis.go i {
+    animation: none;
+    height: 18px;
+  }
+}
+
+/* Aside Live Activity Log */
+aside {
+  position: sticky;
+  top: 70px;
+  align-self: start;
+  background: var(--lg);
+  color: var(--lt);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 100px);
+  min-height: 380px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 980px) {
+  aside {
+    position: static;
+    height: 340px;
+  }
+}
+
+.aside-head {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.aside-head h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 14px;
+}
+
+.btn-clear-log {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--lt);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+#log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 14px;
+  font: 12px/1.6 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+#log div {
+  opacity: 0.95;
+  margin-bottom: 3px;
+  word-break: break-all;
+}
+
+#log .er { color: #ff8a8f; }
+#log .wn { color: #ffc266; }
+#log .ok { color: #8ef7b0; }
+#log b { color: #fff; font-weight: 600; }
+#log .ts { opacity: 0.5; margin-right: 6px; }
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 10px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.chips span {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  opacity: 0.45;
+  color: var(--lt);
+  transition: all 0.25s;
+}
+
+.chips span.f {
+  opacity: 1;
+  background: var(--ac);
+  border-color: var(--ac);
+  color: #fff;
+  font-weight: 500;
+  box-shadow: 0 0 6px rgba(141, 131, 255, 0.4);
+}
+
+/* Automation Card Components (Engine) */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
+  gap: 16px;
+}
+
+.top-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.tabs-nav {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid var(--ln);
+  margin: 10px 0;
+}
+
+.tabs-nav button {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: none;
+  color: var(--mut);
+  padding: 6px 12px;
+}
+
+.tabs-nav button[aria-selected="true"] {
+  color: var(--ink);
+  border-color: var(--sg);
+  font-weight: 700;
+}
+
+.v-panel {
+  display: none;
+  max-height: 440px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.v-panel.on {
+  display: block;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 520px) {
+  .facts { grid-template-columns: 1fr; }
+}
+
+.facts div {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  border: 1px solid var(--ln);
+}
+
+.facts b {
+  display: block;
+  font-size: 11.5px;
+  color: var(--mut);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+ol.st {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+ol.st li {
+  display: flex;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--ln);
+  background: var(--bg);
+  transition: all 0.2s;
+}
+
+ol.st li.on {
+  border-color: var(--sg);
+  background: rgba(255, 122, 26, 0.08);
+  box-shadow: 0 0 0 2px rgba(255, 122, 26, 0.2);
+}
+
+ol.st li.done {
+  border-color: var(--ok);
+}
+
+ol.st li.done .q {
+  background: var(--ok);
+  color: #fff;
+}
+
+ol.st li.skip {
+  opacity: 0.38;
+}
+
+.q {
+  flex: 0 0 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--p);
+  border: 1px solid var(--ln);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+ol.st p {
+  margin: 0;
+  font-size: 13px;
+}
+
+ol.st small {
+  display: block;
+  color: var(--ok);
+  font-size: 11.5px;
+  margin-top: 2px;
+}
+
+abbr {
+  text-decoration: underline dotted var(--ac);
+  cursor: help;
+}
+
+/* SVG Flow */
+svg text {
+  font: 11px 'Space Grotesk', sans-serif;
+}
+
+.nd rect {
+  fill: var(--bg);
+  stroke: var(--ln);
+  stroke-width: 1.5;
+  transition: all 0.25s;
+}
+
+.nd.on rect {
+  stroke: var(--sg);
+  fill: rgba(255, 122, 26, 0.15);
+  stroke-width: 2;
+}
+
+.nd.done rect {
+  stroke: var(--ok);
+  fill: rgba(15, 157, 88, 0.08);
+}
+
+.nd.skip {
+  opacity: 0.35;
+}
+
+.nd text {
+  fill: var(--ink);
+}
+
+.ed {
+  fill: none;
+  stroke: var(--ln);
+  stroke-width: 2;
+}
+
+/* Blueprint JSON blocks */
+.blk {
+  margin-bottom: 10px;
+  border: 1px solid var(--ln);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.blk.on {
+  border-color: var(--sg);
+  box-shadow: 0 0 0 3px rgba(255, 122, 26, 0.2);
+}
+
+.blk.done {
+  border-color: var(--ok);
+}
+
+.blk.skip {
+  opacity: 0.4;
+}
+
+.why {
+  padding: 6px 10px;
+  font-size: 12px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--ln);
+  font-weight: 500;
+}
+
+pre {
+  margin: 0;
+  padding: 10px 12px;
+  background: var(--cd);
+  color: var(--ct);
+  font: 12px/1.5 'JetBrains Mono', ui-monospace, monospace;
+  overflow-x: auto;
+}
+
+pre .k { color: #8ec5ff; font-style: normal; }
+pre .s { color: #b6f0c0; font-style: normal; }
+pre .n { color: #ffb86b; font-style: normal; }
+
+.rc {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--ok);
+  min-height: 20px;
+  font-weight: 500;
+}
+
+/* Tool Agnostic Pill */
+.tool-pill-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  background: var(--bg);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--ln);
+}
+
+.tool-pill-bar button {
+  flex: 1;
+  padding: 4px 8px;
+  font-size: 11.5px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+}
+
+.tool-pill-bar button.active {
+  background: var(--p);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+/* Drawer / Modal */
+dialog {
+  border: 1px solid var(--ln);
+  border-radius: 14px;
+  background: var(--p);
+  color: var(--ink);
+  max-width: 580px;
+  width: 92%;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+/* Fullscreen workflow drawer */
+#workflow-drawer {
+  max-width: 820px;
+  width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Audit / Conversion Section */
+.audit-cta {
+  background: linear-gradient(135deg, var(--p), var(--bg));
+  border: 2px solid var(--ac);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.audit-cta h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  color: var(--ink);
+  text-transform: none;
+}
+
+.audit-cta p {
+  margin: 0;
+  color: var(--mut);
+  font-size: 13px;
+}
+
+  </style>
 </head>
 <body>
 
@@ -478,294 +1539,1059 @@ Protection: Upstream n8n credentials shielded; IP rate limits enforced; Honeypot
     <div class="drawer-content"></div>
   </dialog>
 
-  <!-- App Bootstrap JS -->
-  <script type="module">
-    import { bus } from './src/bus.js';
-    import { engine } from './src/engine.js';
-    import { initTheme } from './src/ui/theme.js';
-    import { initLog } from './src/ui/log.js';
-    import { initPipeline } from './src/ui/pipeline.js';
-    import { CoverageTracker } from './src/ui/coverage.js';
-    import { WorkflowDrawer } from './src/ui/drawer.js';
-    import { createCardElement } from './src/ui/cards.js';
+  <!-- Embedded Built-in Workflows (Zero 404s guaranteed) -->
+  <script>
+    window.__BUILTIN_WORKFLOWS__ = {"01-lead-router.json":{"name":"Lead router","nodes":[{"name":"New inquiry arrives","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"parameters":{"httpMethod":"POST","path":"inquiry","responseMode":"responseNode"},"notes":"A company fills in the hiring form on your website."},{"name":"Budget over ₦50k?","type":"n8n-nodes-base.if","typeVersion":2,"position":[220,0],"parameters":{"conditions":{"number":[{"value1":"={{$json.body.budget}}","operation":"larger","value2":50000}]}},"notes":"Big budgets go to a senior recruiter. Smaller ones go to a nurture list."},{"name":"Alert senior recruiter","type":"n8n-nodes-base.slack","typeVersion":2,"position":[440,-80],"parameters":{"channel":"#priority-leads","text":"=New priority lead: {{$json.body.company}} (₦{{$json.body.budget}})"},"notes":"Your best recruiter gets a Slack notification within seconds."},{"name":"Add to nurture list","type":"n8n-nodes-base.googleSheets","typeVersion":4,"position":[440,80],"parameters":{"operation":"append","sheetName":"Nurture"},"notes":"The lead is saved to a list for gentle follow-up."},{"name":"Send auto-reply","type":"n8n-nodes-base.gmail","typeVersion":2,"position":[660,0],"parameters":{"sendTo":"={{$json.body.email || 'client@example.com'}}","subject":"Thanks for reaching out","message":"We have received your hiring request and will be in touch shortly."},"notes":"The company gets a friendly reply straight away in their inbox."},{"name":"Respond to web page","type":"n8n-nodes-base.respondToWebhook","typeVersion":1,"position":[880,0],"parameters":{"respondWith":"json","responseBody":"={{JSON.stringify({ status: 'ok', priority: $json.body.budget >= 50000 })}}"},"notes":"The website updates immediately confirming the submission."}],"connections":{"New inquiry arrives":{"main":[[{"node":"Budget over ₦50k?","type":"main","index":0}]]},"Budget over ₦50k?":{"main":[[{"node":"Alert senior recruiter","type":"main","index":0}],[{"node":"Add to nurture list","type":"main","index":0}]]},"Alert senior recruiter":{"main":[[{"node":"Send auto-reply","type":"main","index":0}]]},"Add to nurture list":{"main":[[{"node":"Send auto-reply","type":"main","index":0}]]},"Send auto-reply":{"main":[[{"node":"Respond to web page","type":"main","index":0}]]}},"meta":{"autoops":{"cat":"Recruitment","covers":["lead","route","crm"],"plain":{"what":"Sorts every new hiring request by budget and replies instantly.","when":"A company submits the inquiry form on your site.","result":"Hot leads reach a senior recruiter in seconds. Nobody waits for a reply.","saves":"About 20 minutes per lead"},"take":{"Budget over ₦50k?":0},"sample":{"New inquiry arrives":"Received inquiry from Lagos Logistics Ltd (Budget: ₦120,000)","Budget over ₦50k?":"₦120,000 exceeds ₦50,000 threshold → routed to high-priority lane","Alert senior recruiter":"Slack alert sent to #priority-leads channel","Send auto-reply":"Personalized confirmation email dispatched","Respond to web page":"Portal updated with priority confirmation badge"},"live":{"key":"inquiry","mode":"respond"},"toolNotes":{"n8n":"Best choice: self-hosted on Railway for ₦0 API costs and zero limits on lead volume.","make":"Great visual canvas using Routers; costs extra operations as volume scales.","zapier":"Fastest setup using Paths, but requires expensive multi-step Professional tier."}}}},"02-cv-scorer.json":{"name":"CV scorer","nodes":[{"name":"CV uploaded","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"parameters":{"httpMethod":"POST","path":"cv","responseMode":"responseNode"},"notes":"A candidate drops their resume PDF or DOCX on your site."},{"name":"Gemini reads the CV","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[220,0],"parameters":{"method":"POST","url":"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent","sendBody":true,"specifyBody":"json","jsonBody":"={\n  \"contents\": [{\n    \"parts\": [\n      {\"text\": \"Evaluate this resume against Senior Automation Specialist. Return JSON with candidate_name, top_skills, years_experience, match_score (0-100), and summary.\"}\n    ]\n  }],\n  \"generationConfig\": { \"response_mime_type\": \"application/json\" }\n}"},"notes":"AI reads the full document natively and evaluates qualifications."},{"name":"Extract score and skills","type":"n8n-nodes-base.code","typeVersion":2,"position":[440,0],"parameters":{"jsCode":"const res = JSON.parse($input.first().json.candidates[0].content.parts[0].text);\nreturn [{ json: res }];"},"notes":"Cleans the AI score and top competencies into structured fields."},{"name":"Log candidate to ATS","type":"n8n-nodes-base.googleSheets","typeVersion":4,"position":[660,0],"parameters":{"operation":"append","sheetName":"Candidates","options":{}},"notes":"Name, skills, and match score are automatically stored in the tracking sheet."},{"name":"Show score on site","type":"n8n-nodes-base.respondToWebhook","typeVersion":1,"position":[880,0],"parameters":{"respondWith":"json","responseBody":"={{JSON.stringify($json)}}"},"notes":"The candidate match score and summary render instantly on screen."}],"connections":{"CV uploaded":{"main":[[{"node":"Gemini reads the CV","type":"main","index":0}]]},"Gemini reads the CV":{"main":[[{"node":"Extract score and skills","type":"main","index":0}]]},"Extract score and skills":{"main":[[{"node":"Log candidate to ATS","type":"main","index":0}]]},"Log candidate to ATS":{"main":[[{"node":"Show score on site","type":"main","index":0}]]}},"meta":{"autoops":{"cat":"Recruitment","covers":["cv","score","ats"],"plain":{"what":"Reads candidate CVs natively with multimodal AI and calculates job match score.","when":"A candidate drops their resume on your intake dropzone.","result":"A verified score out of 100, identified core skills, and an updated ATS sheet.","saves":"About 15 minutes per candidate resume"},"sample":{"CV uploaded":"Amaka_Obi_CV.pdf (184 KB) received","Gemini reads the CV":"Parsed PDF via Gemini 2.0 Flash Vision with JSON schema enforcement","Extract score and skills":"Extracted match score: 88%. Skills: n8n, Make.com, Vapi, Paystack","Log candidate to ATS":"Appended record to Google Sheets / Airtable ATS","Show score on site":"Returned score 88 and skills to the interactive score ring"},"live":{"key":"cv","mode":"respond"},"toolNotes":{"n8n":"Best choice: accepts raw PDF binary buffers directly without 3rd-party OCR converters.","make":"Requires a Google Drive / PDF extraction module before passing text to OpenAI.","zapier":"Limited file size handling and costly AI step add-ons."}}}},"03-interview-booking.json":{"name":"Interview booking","nodes":[{"name":"Cal.com booking created","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"parameters":{"httpMethod":"POST","path":"booking","responseMode":"responseNode"},"notes":"Candidate or corporate client confirms a meeting slot on Cal.com."},{"name":"Create Google Calendar event","type":"n8n-nodes-base.googleCalendar","typeVersion":1,"position":[220,0],"parameters":{"operation":"create","calendar":"primary","summary":"AutoOps Technical Interview","start":"={{$json.body.slot || '2026-10-18T10:00:00Z'}}"},"notes":"Generates a synced Google Meet link and sends calendar invites."},{"name":"Queue 24h SMS reminder","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[440,0],"parameters":{"method":"POST","url":"https://api.ng.termii.com/api/sms/send","sendBody":true,"specifyBody":"json","jsonBody":"={\n  \"to\": \"{{$json.body.phone || '2348000000000'}}\",\n  \"from\": \"AutoOps\",\n  \"sms\": \"Reminder: Your interview is tomorrow at {{$json.body.slot}}\",\n  \"type\": \"plain\",\n  \"channel\": \"generic\"\n}"},"notes":"Schedules an automated SMS reminder 24 hours prior to the call."},{"name":"Queue 1h WhatsApp reminder","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[660,0],"parameters":{"method":"POST","url":"https://graph.facebook.com/v19.0/messages","sendBody":true,"specifyBody":"json"},"notes":"Prepares a WhatsApp message with meeting link 1 hour prior."},{"name":"Confirm booking on page","type":"n8n-nodes-base.respondToWebhook","typeVersion":1,"position":[880,0],"parameters":{"respondWith":"json","responseBody":"={{JSON.stringify({ status: 'confirmed', slot: $json.body.slot })}}"},"notes":"Confirmation message and reminders schedule render on the site."}],"connections":{"Cal.com booking created":{"main":[[{"node":"Create Google Calendar event","type":"main","index":0}]]},"Create Google Calendar event":{"main":[[{"node":"Queue 24h SMS reminder","type":"main","index":0}]]},"Queue 24h SMS reminder":{"main":[[{"node":"Queue 1h WhatsApp reminder","type":"main","index":0}]]},"Queue 1h WhatsApp reminder":{"main":[[{"node":"Confirm booking on page","type":"main","index":0}]]}},"meta":{"autoops":{"cat":"Recruitment","covers":["book","rem"],"plain":{"what":"Syncs Cal.com bookings to Google Calendar and queues SMS/WhatsApp reminders.","when":"A client or candidate reserves an interview slot.","result":"Zero meeting no-shows with timed WhatsApp and SMS reminders.","saves":"Eliminates 30 minutes of calendar coordination per meeting"},"sample":{"Cal.com booking created":"booking.created event received for Tue 09:30","Create Google Calendar event":"Google Calendar event + Google Meet link generated","Queue 24h SMS reminder":"Termii SMS reminder queued for T-24h","Queue 1h WhatsApp reminder":"WhatsApp Cloud reminder queued for T-1h","Confirm booking on page":"Meeting locked. Reminders scheduled."},"live":{"key":"booking","mode":"respond"},"toolNotes":{"n8n":"Best choice: Cal.com webhook integration is completely free, unlike Calendly which requires paid API tiers.","make":"Works well with Google Calendar; requires webhook response module for fast front-end ACK.","zapier":"Calendly webhook triggers require premium Zapier plans."}}}},"04-transcript-dossier.json":{"name":"Transcript dossier","nodes":[{"name":"Fathom transcript arrives","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"parameters":{"httpMethod":"POST","path":"transcript","responseMode":"responseNode"},"notes":"Fathom or Otter sends the screening call transcript when a call finishes."},{"name":"Gemini extracts competencies","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[220,0],"parameters":{"method":"POST","url":"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent","sendBody":true,"specifyBody":"json","jsonBody":"={\n  \"contents\": [{\n    \"parts\": [\n      {\"text\": \"Analyze this screening transcript. Extract candidate name, key strengths, measured business impact, notice period, salary expectation, and growth areas. Format as structured JSON.\"}\n    ]\n  }],\n  \"generationConfig\": { \"response_mime_type\": \"application/json\" }\n}"},"notes":"AI distills a 30-minute screening dialogue into key technical proofs."},{"name":"Format candidate dossier","type":"n8n-nodes-base.code","typeVersion":2,"position":[440,0],"parameters":{"jsCode":"const raw = $input.first().json;\nreturn [{ json: { status: 'success', summary: 'Dossier synthesized from interview transcript', data: raw } }];"},"notes":"Transforms raw extracted bullet points into an executive presentation brief."},{"name":"Publish to client portal","type":"n8n-nodes-base.respondToWebhook","typeVersion":1,"position":[660,0],"parameters":{"respondWith":"json","responseBody":"={{JSON.stringify($json)}}"},"notes":"The formatted dossier renders immediately in the hiring manager dashboard."}],"connections":{"Fathom transcript arrives":{"main":[[{"node":"Gemini extracts competencies","type":"main","index":0}]]},"Gemini extracts competencies":{"main":[[{"node":"Format candidate dossier","type":"main","index":0}]]},"Format candidate dossier":{"main":[[{"node":"Publish to client portal","type":"main","index":0}]]}},"meta":{"autoops":{"cat":"Recruitment","covers":["tr","dos"],"plain":{"what":"Summarizes screening call transcripts into polished, client-ready dossiers.","when":"A screening call completes and Fathom/Otter fires its webhook.","result":"Hiring managers receive executive summaries highlighting strengths and salary fit.","saves":"45 minutes of manual note-taking per screened candidate"},"sample":{"Fathom transcript arrives":"Received 840-word call transcript for candidate Amaka Obi","Gemini extracts competencies":"Extracted 6 competencies, ₦450k salary expectations, 2-week notice","Format candidate dossier":"Generated client presentation dossier markdown layout","Publish to client portal":"Dossier rendered live on recruitment dashboard"},"live":{"key":"transcript","mode":"respond"},"toolNotes":{"n8n":"Best choice: accepts massive transcript payloads with zero token truncation on self-hosted instances.","make":"Works well with Otter/Fathom; OpenAI modules have character limits on cheaper tiers.","zapier":"Expensive to chain transcript processing with AI formatting."}}}},"05-payment-reconciler.json":{"name":"Payment reconciler","nodes":[{"name":"Paystack payment succeeds","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"parameters":{"httpMethod":"POST","path":"payment","responseMode":"responseNode"},"notes":"A customer completes checkout and Paystack fires a charge.success webhook."},{"name":"Mark invoice paid","type":"n8n-nodes-base.googleSheets","typeVersion":4,"position":[220,0],"parameters":{"operation":"update","sheetName":"Ledger"},"notes":"The matching invoice in your accounting ledger immediately switches to Paid."},{"name":"Generate PDF receipt","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[440,0],"parameters":{"method":"POST","url":"https://api.pdfgeneratorapi.com/v3/templates/invoice/output","sendBody":true,"specifyBody":"json"},"notes":"Builds a branded, downloadable PDF receipt with tax and transaction reference."},{"name":"Email invoice to customer","type":"n8n-nodes-base.gmail","typeVersion":2,"position":[660,-60],"parameters":{"sendTo":"={{$json.body.customer_email || 'client@example.com'}}","subject":"Payment Receipt & Tax Invoice","message":"Thank you for your payment. Attached is your official invoice."},"notes":"The customer receives their official receipt by email within seconds."},{"name":"Send onboarding invite","type":"n8n-nodes-base.telegram","typeVersion":1,"position":[660,60],"parameters":{"chatId":"@autoops_vip_clients","text":"=Welcome! Your order is active. Access client portal here: https://autoops.dev"},"notes":"Dispatches VIP Telegram or WhatsApp onboarding link to the customer."},{"name":"Respond to checkout page","type":"n8n-nodes-base.respondToWebhook","typeVersion":1,"position":[880,0],"parameters":{"respondWith":"json","responseBody":"={{JSON.stringify({ status: 'reconciled', amount: $json.body.amount })}}"},"notes":"Updates checkout UI to show instant order fulfillment and ledger sync."}],"connections":{"Paystack payment succeeds":{"main":[[{"node":"Mark invoice paid","type":"main","index":0}]]},"Mark invoice paid":{"main":[[{"node":"Generate PDF receipt","type":"main","index":0}]]},"Generate PDF receipt":{"main":[[{"node":"Email invoice to customer","type":"main","index":0},{"node":"Send onboarding invite","type":"main","index":0}]]},"Email invoice to customer":{"main":[[{"node":"Respond to checkout page","type":"main","index":0}]]},"Send onboarding invite":{"main":[[{"node":"Respond to checkout page","type":"main","index":0}]]}},"meta":{"autoops":{"cat":"Finance","covers":["pay","led","inv","onb"],"plain":{"what":"Reconciles Paystack charges, updates ledger, renders PDF invoices, and sends invites.","when":"A customer completes a payment via Paystack checkout.","result":"Accounting books stay 100% balanced and clients are onboarded instantly.","saves":"About 15 minutes of manual bookkeeping per transaction"},"sample":{"Paystack payment succeeds":"charge.success verified: ₦25,000 received from Chidi Eze","Mark invoice paid":"Invoice INV-105 marked as Paid in accounting ledger","Generate PDF receipt":"Generated PDF invoice with reference TRX-884920","Email invoice to customer":"Dispatched receipt PDF to customer email","Send onboarding invite":"Dispatched onboarding invitation via Telegram / WhatsApp","Respond to checkout page":"Checkout completed and confirmed on page"},"live":{"key":"payment","mode":"respond"},"toolNotes":{"n8n":"Best choice: validates cryptographic Paystack signatures directly inside an n8n Code node.","make":"Good webhook handling; generating dynamic PDF binaries requires 3rd-party integration credits.","zapier":"Requires multiple Zaps or expensive paths to handle reconciliation, PDF, and chat invites."}}}},"06-low-stock-alert.json":{"name":"Low-stock alert","nodes":[{"name":"Every day at 8am","type":"n8n-nodes-base.scheduleTrigger","typeVersion":1,"position":[0,0],"parameters":{"rule":{"interval":[{"triggerAtHour":8}]}},"notes":"An automated cron timer initiates the warehouse inventory check every morning."},{"name":"Read stock sheet","type":"n8n-nodes-base.googleSheets","typeVersion":4,"position":[220,0],"parameters":{"operation":"getAll","sheetName":"Inventory"},"notes":"Queries the database or Google Sheet for latest unit quantities across all SKUs."},{"name":"Anything below 10?","type":"n8n-nodes-base.if","typeVersion":2,"position":[440,0],"parameters":{"conditions":{"number":[{"value1":"={{$json.quantity}}","operation":"smaller","value2":10}]}},"notes":"Evaluates whether any inventory items have dropped beneath the danger reorder threshold."},{"name":"Text manager to reorder","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[660,-60],"parameters":{"method":"POST","url":"https://api.ng.termii.com/api/sms/send","sendBody":true,"specifyBody":"json","jsonBody":"={\n  \"to\": \"2348030000000\",\n  \"from\": \"AutoOps\",\n  \"sms\": \"LOW STOCK WARNING: SKU '{{$json.item}}' only has {{$json.quantity}} units left. Reorder immediately.\",\n  \"type\": \"plain\",\n  \"channel\": \"generic\"\n}"},"notes":"Sends urgent SMS alert to the operations lead listing exact SKUs to replenish."},{"name":"Do nothing","type":"n8n-nodes-base.noOp","typeVersion":1,"position":[660,60],"parameters":{},"notes":"Stock levels are healthy. No notification needed, saving SMS credits."}],"connections":{"Every day at 8am":{"main":[[{"node":"Read stock sheet","type":"main","index":0}]]},"Read stock sheet":{"main":[[{"node":"Anything below 10?","type":"main","index":0}]]},"Anything below 10?":{"main":[[{"node":"Text manager to reorder","type":"main","index":0}],[{"node":"Do nothing","type":"main","index":0}]]}},"meta":{"autoops":{"cat":"Operations","covers":["stk"],"plain":{"what":"Monitors stock levels every morning and alerts management via SMS if inventory runs low.","when":"Runs autonomously every day at 08:00 AM.","result":"Zero stockouts and instant alerts for items requiring replenishment.","saves":"30 minutes of manual daily warehouse stock counting"},"take":{"Anything below 10?":0},"sample":{"Every day at 8am":"Cron scheduler fired at 08:00 UTC","Read stock sheet":"Retrieved 4 inventory items (SIM packs: 8 units remaining)","Anything below 10?":"SIM packs count (8) < threshold (10) → triggered reorder branch","Text manager to reorder":"Termii SMS dispatched: 'Reorder SIM packs immediately'"},"live":{"key":"stock","mode":"respond"},"toolNotes":{"n8n":"Best choice: schedule triggers run 24/7 on Railway with zero polling quota costs.","make":"Free tier restricts scheduling intervals and burns ops on every empty sheet scan.","zapier":"Scheduled Zaps cost expensive tasks even when no reorder condition is met."}}}},"07-debt-reminders.json":{"name":"Debt reminders","nodes":[{"name":"Scan overdue ledger daily","type":"n8n-nodes-base.scheduleTrigger","typeVersion":1,"position":[0,0],"parameters":{"rule":{"interval":[{"triggerAtHour":9}]}},"notes":"Cron schedule triggers an automated overdue audit every morning at 9:00 AM."},{"name":"Find invoices overdue > 7 days","type":"n8n-nodes-base.googleSheets","typeVersion":4,"position":[220,0],"parameters":{"operation":"getAll","sheetName":"Ledger"},"notes":"Pulls all unpaid accounts where due date has lapsed past 7 days."},{"name":"Are there overdue invoices?","type":"n8n-nodes-base.if","typeVersion":2,"position":[440,0],"parameters":{"conditions":{"string":[{"value1":"={{$json.status}}","operation":"equal","value2":"Overdue"}]}},"notes":"Filters out paid and current invoices, isolating only accounts in arrears."},{"name":"Send WhatsApp debt reminder","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[660,0],"parameters":{"method":"POST","url":"https://graph.facebook.com/v19.0/messages","sendBody":true,"specifyBody":"json","jsonBody":"={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{$json.phone}}\",\n  \"type\": \"text\",\n  \"text\": { \"body\": \"Hello {{$json.customer}}, gentle reminder that invoice {{$json.invoice_id}} (₦{{$json.amount}}) is past due. Pay securely here: https://paystack.com/pay/demo\" }\n}"},"notes":"Sends polite, compliant WhatsApp reminders with direct 1-click Paystack payment links."},{"name":"Log reminder in ledger","type":"n8n-nodes-base.googleSheets","typeVersion":4,"position":[880,0],"parameters":{"operation":"update","sheetName":"Ledger"},"notes":"Updates last contacted date and reminder count on the client record."}],"connections":{"Scan overdue ledger daily":{"main":[[{"node":"Find invoices overdue > 7 days","type":"main","index":0}]]},"Find invoices overdue > 7 days":{"main":[[{"node":"Are there overdue invoices?","type":"main","index":0}]]},"Are there overdue invoices?":{"main":[[{"node":"Send WhatsApp debt reminder","type":"main","index":0}]]},"Send WhatsApp debt reminder":{"main":[[{"node":"Log reminder in ledger","type":"main","index":0}]]}},"meta":{"autoops":{"cat":"Finance","covers":["debt"],"plain":{"what":"Scans accounts receivable daily and dispatches automated WhatsApp reminders for overdue balances.","when":"Runs automatically every weekday at 09:00 AM.","result":"Dramatically reduces late payment cycles while preserving client goodwill.","saves":"Recovers unpaid revenue 4x faster without awkward phone calls"},"take":{"Are there overdue invoices?":0},"sample":{"Scan overdue ledger daily":"Daily receivables audit initiated","Find invoices overdue > 7 days":"Identified 2 overdue accounts: Bello Tech (₦72,000), Zenith Farms (₦90,000)","Are there overdue invoices?":"2 overdue accounts isolated for communication","Send WhatsApp debt reminder":"WhatsApp reminder dispatched with embedded Paystack link","Log reminder in ledger":"Ledger updated with reminder timestamp and sequence step 1"},"live":{"key":"debt","mode":"respond"},"toolNotes":{"n8n":"Best choice: loop over array of debtors with built-in rate-limiting delays to protect WhatsApp sender reputation.","make":"Iterators and aggregators in Make require precise error handling when debtor lists are empty.","zapier":"Looping by Zapier is awkward and hits step limits quickly."}}}},"08-faq-chatbot-lead-score.json":{"name":"FAQ chatbot and lead scorer","nodes":[{"name":"Incoming chat message","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"parameters":{"httpMethod":"POST","path":"chat","responseMode":"responseNode"},"notes":"A website visitor types a query into the live Chatbase/Voiceflow widget."},{"name":"Match intent and query KB","type":"n8n-nodes-base.code","typeVersion":2,"position":[220,0],"parameters":{"jsCode":"const text = ($input.first().json.body?.msg || '').toLowerCase();\nlet reply = 'I can help with pricing, booking, voice agents, and recruitment automation.';\nlet scoreInc = 10;\n\nif (/price|cost|₦|fee|rate/.test(text)) {\n  reply = 'Retainers start at ₦150k/month. Would you like a tailored quote?';\n  scoreInc = 35;\n} else if (/book|call|demo|schedule|interview/.test(text)) {\n  reply = 'Happy to book you in! Please choose a convenient slot on our booking calendar.';\n  scoreInc = 40;\n} else if (/voice|vapi|phone|agent/.test(text)) {\n  reply = 'Our AI voice agents handle 24/7 candidate screening and customer intake seamlessly.';\n  scoreInc = 25;\n}\n\nreturn [{ json: { text, reply, scoreInc } }];"},"notes":"Queries the company knowledge base and generates an accurate, immediate answer."},{"name":"Calculate lead score","type":"n8n-nodes-base.code","typeVersion":2,"position":[440,0],"parameters":{"jsCode":"const item = $input.first().json;\nconst newScore = Math.min(100, (item.scoreInc || 10) + 40);\nconst status = newScore >= 70 ? 'Qualified' : (newScore >= 35 ? 'Interested' : 'New');\nreturn [{ json: { ...item, score: newScore, status } }];"},"notes":"Calculates intent points based on buying signals, budget inquiries, and booking requests."},{"name":"Is lead qualified?","type":"n8n-nodes-base.if","typeVersion":2,"position":[660,0],"parameters":{"conditions":{"number":[{"value1":"={{$json.score}}","operation":"largerEqual","value2":70}]}},"notes":"Evaluates whether buyer intent has reached high-priority sales qualification."},{"name":"Update CRM to Qualified","type":"n8n-nodes-base.googleSheets","typeVersion":4,"position":[880,-60],"parameters":{"operation":"append","sheetName":"CRM_Leads"},"notes":"Promotes the lead status in CRM and alerts sales reps for high-value follow up."},{"name":"Respond to chat widget","type":"n8n-nodes-base.respondToWebhook","typeVersion":1,"position":[880,60],"parameters":{"respondWith":"json","responseBody":"={{JSON.stringify({ reply: $json.reply, score: $json.score, status: $json.status })}}"},"notes":"Delivers the conversational response back to the user widget in milliseconds."}],"connections":{"Incoming chat message":{"main":[[{"node":"Match intent and query KB","type":"main","index":0}]]},"Match intent and query KB":{"main":[[{"node":"Calculate lead score","type":"main","index":0}]]},"Calculate lead score":{"main":[[{"node":"Is lead qualified?","type":"main","index":0}]]},"Is lead qualified?":{"main":[[{"node":"Update CRM to Qualified","type":"main","index":0}],[{"node":"Respond to chat widget","type":"main","index":0}]]},"Update CRM to Qualified":{"main":[[{"node":"Respond to chat widget","type":"main","index":0}]]}},"meta":{"autoops":{"cat":"Chat & Voice","covers":["chat","qual"],"plain":{"what":"Answers customer queries with knowledge-base AI and scores buying intent in real-time.","when":"A visitor sends a message through the website chat widget.","result":"Visitors receive immediate answers and high-intent leads are flagged as Qualified in CRM.","saves":"Eliminates 80% of repetitive Tier-1 customer support questions"},"take":{"Is lead qualified?":0},"sample":{"Incoming chat message":"Visitor inquired: 'How much does your monthly automation retainer cost?'","Match intent and query KB":"Matched intent: Pricing FAQ → Retrieved retainer tiers","Calculate lead score":"Lead score increased (+35 points) → Total: 75","Is lead qualified?":"Score 75 >= 70 → Lead marked 'Qualified'","Update CRM to Qualified":"CRM contact status upgraded to 'Sales Ready'","Respond to chat widget":"Delivered price breakdown + booking invitation"},"live":{"key":"chat","mode":"respond"},"toolNotes":{"n8n":"Best choice: connects directly to Vector stores or LLMs while updating internal CRMs with zero SaaS markups.","make":"Very clean JSON webhook processing; rate limits can trigger if chat spikes.","zapier":"Too slow for conversational chat latency requirements."}}}},"09-voice-screening-postcall.json":{"name":"Voice screening post-call pipeline","nodes":[{"name":"Vapi post-call webhook","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"parameters":{"httpMethod":"POST","path":"voice","responseMode":"responseNode"},"notes":"Vapi or Retell AI dispatches the full audio recording and transcript after the phone call."},{"name":"Analyze sentiment and answers","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[220,0],"parameters":{"method":"POST","url":"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent","sendBody":true,"specifyBody":"json","jsonBody":"={\n  \"contents\": [{\n    \"parts\": [\n      {\"text\": \"Evaluate this phone screening transcript. Score communication clarity, technical depth, sentiment, and hiring recommendation (Pass/Reject).\"}\n    ]\n  }],\n  \"generationConfig\": { \"response_mime_type\": \"application/json\" }\n}"},"notes":"Evaluates candidate verbal answers, fluency, and key project metrics."},{"name":"Is candidate recommended?","type":"n8n-nodes-base.if","typeVersion":2,"position":[440,0],"parameters":{"conditions":{"boolean":[{"value1":true,"value2":true}]}},"notes":"Filters candidates who demonstrated the prerequisite technical automation competencies."},{"name":"Append summary to dossier","type":"n8n-nodes-base.googleSheets","typeVersion":4,"position":[660,0],"parameters":{"operation":"append","sheetName":"Voice_Screenings"},"notes":"Stores audio transcript, key highlights, and AI assessment in the candidate record."},{"name":"Notify recruiter on Slack","type":"n8n-nodes-base.slack","typeVersion":2,"position":[880,-60],"parameters":{"channel":"#recruitment-alerts","text":"=Voice screening completed for candidate. Recommended: YES. Sentiment: Positive."},"notes":"Pings the talent team with key soundbites and next interview step."},{"name":"Respond to voice console","type":"n8n-nodes-base.respondToWebhook","typeVersion":1,"position":[880,60],"parameters":{"respondWith":"json","responseBody":"={{JSON.stringify({ status: 'completed', recommendation: 'Pass', sentiment: 'Positive' })}}"},"notes":"Updates the in-browser WebRTC console with the post-call diagnostic report."}],"connections":{"Vapi post-call webhook":{"main":[[{"node":"Analyze sentiment and answers","type":"main","index":0}]]},"Analyze sentiment and answers":{"main":[[{"node":"Is candidate recommended?","type":"main","index":0}]]},"Is candidate recommended?":{"main":[[{"node":"Append summary to dossier","type":"main","index":0}]]},"Append summary to dossier":{"main":[[{"node":"Notify recruiter on Slack","type":"main","index":0},{"node":"Respond to voice console","type":"main","index":0}]]}},"meta":{"autoops":{"cat":"Chat & Voice","covers":["voice","post"],"plain":{"what":"Executes 24/7 AI voice phone screenings, extracts sentiment, and logs complete post-call briefs.","when":"An AI phone call with an applicant concludes.","result":"Candidate qualification is delivered immediately without human recruiters making phone calls.","saves":"20 minutes of phone screening per applicant"},"take":{"Is candidate recommended?":0},"sample":{"Vapi post-call webhook":"Post-call payload received: 3m 42s duration, 4 Q&As answered","Analyze sentiment and answers":"Sentiment: Positive (0.92). Clear experience in n8n and Make","Is candidate recommended?":"Candidate meets senior bar → Recommended","Append summary to dossier":"Dossier enriched with audio transcript & score","Notify recruiter on Slack":"Posted candidate pass notification to #recruitment-alerts","Respond to voice console":"Console status updated: 'Screening Passed'"},"live":{"key":"voice","mode":"respond"},"toolNotes":{"n8n":"Best choice: seamlessly digests heavy WebRTC JSON payloads and connects to ElevenLabs voice streams.","make":"Works well with Vapi webhooks; requires custom JSON parsing modules.","zapier":"Cannot parse large audio transcript buffers effectively."}}}},"10-outbound-call.json":{"name":"Outbound call dispatcher","nodes":[{"name":"Outbound call requested","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"parameters":{"httpMethod":"POST","path":"outbound","responseMode":"responseNode"},"notes":"A user submits their phone number requesting an instant AI phone call."},{"name":"Validate and format phone","type":"n8n-nodes-base.code","typeVersion":2,"position":[220,0],"parameters":{"jsCode":"const phone = ($input.first().json.body?.phone || '+2348030000000').replace(/[^0-9+]/g, '');\nreturn [{ json: { phone, valid: phone.length >= 10 } }];"},"notes":"Validates the country code and cleans formatting into E.164 telecommunications standard."},{"name":"Trigger Vapi outbound dialer","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[440,0],"parameters":{"method":"POST","url":"https://api.vapi.ai/call/phone","sendBody":true,"specifyBody":"json","jsonBody":"={\n  \"phoneNumberId\": \"demo-phone-id\",\n  \"customer\": { \"number\": \"{{$json.phone}}\" },\n  \"assistantId\": \"autoops-screening-agent\"\n}"},"notes":"Calls the Vapi REST API to dial the customer or candidate immediately."},{"name":"Log call dispatch","type":"n8n-nodes-base.googleSheets","typeVersion":4,"position":[660,0],"parameters":{"operation":"append","sheetName":"Outbound_Calls"},"notes":"Records the outbound call ID, recipient phone number, and timestamp."},{"name":"Respond with call status","type":"n8n-nodes-base.respondToWebhook","typeVersion":1,"position":[880,0],"parameters":{"respondWith":"json","responseBody":"={{JSON.stringify({ status: 'dialing', phone: $json.phone })}}"},"notes":"Notifies the webpage that the call has been placed and is currently ringing."}],"connections":{"Outbound call requested":{"main":[[{"node":"Validate and format phone","type":"main","index":0}]]},"Validate and format phone":{"main":[[{"node":"Trigger Vapi outbound dialer","type":"main","index":0}]]},"Trigger Vapi outbound dialer":{"main":[[{"node":"Log call dispatch","type":"main","index":0}]]},"Log call dispatch":{"main":[[{"node":"Respond with call status","type":"main","index":0}]]}},"meta":{"autoops":{"cat":"Chat & Voice","covers":["out"],"plain":{"what":"Triggers immediate outbound voice calls using Vapi API to interview candidates or qualify leads.","when":"A user clicks 'Call me now' or requests phone contact.","result":"The phone rings within 3 seconds, connecting the user directly to an AI specialist.","saves":"Eliminates lead drop-off by responding in under 30 seconds"},"sample":{"Outbound call requested":"Received call request for +234 803 000 0000","Validate and format phone":"Phone standardized to E.164: +2348030000000","Trigger Vapi outbound dialer":"Vapi dispatch: Call ID #call_9182a initialized","Log call dispatch":"Call record logged in communications ledger","Respond with call status":"UI updated: Phone is currently ringing"},"live":{"key":"outbound","mode":"respond"},"toolNotes":{"n8n":"Best choice: securely handles API credentials and webhook callbacks in a single instance.","make":"Works well as an outbound webhook forwarder to Vapi.","zapier":"Supported via Vapi Zapier integration, but has high latency (15-60 seconds) on non-instant triggers."}}}},"11-content-studio.json":{"name":"AI content studio and scheduler","nodes":[{"name":"Topic brief received","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"parameters":{"httpMethod":"POST","path":"content","responseMode":"responseNode"},"notes":"Marketing lead enters a core campaign topic, target tone, and goals."},{"name":"Gemini generates multi-channel copy","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[220,0],"parameters":{"method":"POST","url":"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent","sendBody":true,"specifyBody":"json","jsonBody":"={\n  \"contents\": [{\n    \"parts\": [\n      {\"text\": \"Write 3 high-converting social media posts based on this topic: {{$json.body.topic}}. Output a JSON object with keys: linkedin (long-form narrative), twitter_thread (punchy numbered thread), and instagram_caption (visual summary with relevant hashtags).\"}\n    ]\n  }],\n  \"generationConfig\": { \"response_mime_type\": \"application/json\" }\n}"},"notes":"Generates tailored LinkedIn thought leadership, X threads, and Instagram hooks."},{"name":"Format platform payloads","type":"n8n-nodes-base.code","typeVersion":2,"position":[440,0],"parameters":{"jsCode":"const topic = $input.first().json.body?.topic || 'Automation for SMEs';\nreturn [{ json: {\n  posts: [\n    { platform: 'LinkedIn', content: `${topic}. Most SMEs lose hours to repetitive work. Automate leads, invoices, and follow-ups to scale fast.` },\n    { platform: 'X', content: `1/ ${topic}\\n2/ Start with tasks repeated daily.\\n3/ Connect n8n webhooks.\\n4/ Reclaim 10 hours/week.` },\n    { platform: 'Instagram', content: `${topic} ✨ Save this post for your next workflow audit. #automation #sme #operations` }\n  ]\n} }];"},"notes":"Optimizes text length, hashtags, and formatting specific to each social network."},{"name":"Add to Notion content calendar","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[660,0],"parameters":{"method":"POST","url":"https://api.notion.com/v1/pages","sendBody":true,"specifyBody":"json"},"notes":"Populates the editorial calendar database with publish dates and draft copy."},{"name":"Schedule posts in Buffer","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[880,0],"parameters":{"method":"POST","url":"https://api.bufferapp.com/1/updates/create.json","sendBody":true,"specifyBody":"json"},"notes":"Queues the social media updates into optimal engagement time slots."},{"name":"Respond with scheduled posts","type":"n8n-nodes-base.respondToWebhook","typeVersion":1,"position":[1100,0],"parameters":{"respondWith":"json","responseBody":"={{JSON.stringify($json)}}"},"notes":"Returns scheduled post previews and content calendar dates to the dashboard."}],"connections":{"Topic brief received":{"main":[[{"node":"Gemini generates multi-channel copy","type":"main","index":0}]]},"Gemini generates multi-channel copy":{"main":[[{"node":"Format platform payloads","type":"main","index":0}]]},"Format platform payloads":{"main":[[{"node":"Add to Notion content calendar","type":"main","index":0}]]},"Add to Notion content calendar":{"main":[[{"node":"Schedule posts in Buffer","type":"main","index":0}]]},"Schedule posts in Buffer":{"main":[[{"node":"Respond with scheduled posts","type":"main","index":0}]]}},"meta":{"autoops":{"cat":"Marketing","covers":["cont","sch"],"plain":{"what":"Generates platform-specific social posts via Gemini AI and schedules them to Notion and Buffer.","when":"A new marketing topic and tone is entered into the studio.","result":"LinkedIn, X, and Instagram campaigns are written, reviewed, and scheduled in 10 seconds.","saves":"Over 4 hours of copy writing and social scheduling per week"},"sample":{"Topic brief received":"Received topic: 'How AI automation saves SMEs 10 hours a week'","Gemini generates multi-channel copy":"Generated 3 platform variants (LinkedIn, X, Instagram)","Format platform payloads":"Formatted Markdown text and hashtags for each network","Add to Notion content calendar":"3 database rows created in Notion Content Calendar","Schedule posts in Buffer":"Queued posts for 09:00 AM delivery across networks","Respond with scheduled posts":"Calendar table populated on screen"},"live":{"key":"content","mode":"respond"},"toolNotes":{"n8n":"Best choice: transforms single prompt into array of posts and iterates over publishing APIs without usage caps.","make":"Great Notion integration; Buffer modules occasionally have token refresh friction.","zapier":"Requires multi-step loops that consume high monthly operation limits."}}}},"12-email-autoresponder-drip.json":{"name":"Email autoresponder and drip progression","nodes":[{"name":"Customer email received","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"parameters":{"httpMethod":"POST","path":"email","responseMode":"responseNode"},"notes":"Incoming email arrives in your inbox from a prospective client."},{"name":"Gemini drafts contextual reply","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[220,0],"parameters":{"method":"POST","url":"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent","sendBody":true,"specifyBody":"json","jsonBody":"={\n  \"contents\": [{\n    \"parts\": [\n      {\"text\": \"Draft a polite, professional reply to this client inquiry: {{$json.body.email || 'Inquiry about automation'}}. Emphasize WhatsApp/n8n solutions, outline starter retainers from ₦150k/mo, and offer a 10-minute Loom walkthrough.\"}\n    ]\n  }]\n}"},"notes":"Generates a helpful, personalized response addressing their exact operational pain."},{"name":"Send draft via Gmail","type":"n8n-nodes-base.gmail","typeVersion":2,"position":[440,0],"parameters":{"sendTo":"={{$json.body.sender || 'prospect@business.ng'}}","subject":"Re: Your Automation Inquiry","message":"={{$json.candidates[0].content.parts[0].text || 'Thank you for reaching out. We can automate this.'}}"},"notes":"Dispatches the email from your business domain within 60 seconds."},{"name":"Schedule drip follow-up in 2 days","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[660,0],"parameters":{"method":"POST","url":"https://api.hubapi.com/automation/v4/actions/drip","sendBody":true,"specifyBody":"json"},"notes":"Enrolls the recipient in a 5-step educational case study sequence."},{"name":"Respond to dashboard","type":"n8n-nodes-base.respondToWebhook","typeVersion":1,"position":[880,0],"parameters":{"respondWith":"json","responseBody":"={{JSON.stringify({ status: 'sent', drip: 'Step 1 of 5 armed' })}}"},"notes":"Confirms on the management portal that the reply was delivered and nurture armed."}],"connections":{"Customer email received":{"main":[[{"node":"Gemini drafts contextual reply","type":"main","index":0}]]},"Gemini drafts contextual reply":{"main":[[{"node":"Send draft via Gmail","type":"main","index":0}]]},"Send draft via Gmail":{"main":[[{"node":"Schedule drip follow-up in 2 days","type":"main","index":0}]]},"Schedule drip follow-up in 2 days":{"main":[[{"node":"Respond to dashboard","type":"main","index":0}]]}},"meta":{"autoops":{"cat":"Marketing","covers":["eml","drip"],"plain":{"what":"Drafts and sends personalized email responses via AI and queues an educational drip sequence.","when":"A new email query arrives in the inbox.","result":"Prospect receives a thorough reply in under a minute, followed by automatic case study follow-ups.","saves":"15 minutes per customer email and doubles lead conversion"},"sample":{"Customer email received":"Inquiry: 'Do you offer WhatsApp automation for a small pharmacy?'","Gemini drafts contextual reply":"Drafted tailored response quoting ₦150k retainer + Loom video offer","Send draft via Gmail":"Auto-response sent to customer inbox via Google Workspace","Schedule drip follow-up in 2 days":"Nurture drip step 2 of 5 scheduled for Day +2","Respond to dashboard":"Draft reply rendered on portal with drip confirmation"},"live":{"key":"email","mode":"respond"},"toolNotes":{"n8n":"Best choice: seamlessly combines AI text generation, Gmail OAuth, and delayed execution timers.","make":"Wait/sleep modules in Make tie up scenario execution slots.","zapier":"Delay by Zapier works, but multi-step branching quickly drives up monthly Zapier bills."}}}},"13-global-error-handler.json":{"name":"Global error handler and recovery","nodes":[{"name":"Error Trigger (Global)","type":"n8n-nodes-base.errorTrigger","typeVersion":1,"position":[0,0],"parameters":{},"notes":"Fires automatically when any upstream workflow encounters an unexpected error or API rate limit."},{"name":"Classify failure cause","type":"n8n-nodes-base.code","typeVersion":2,"position":[220,0],"parameters":{"jsCode":"const err = $input.first().json.execution?.error || {};\nconst is429 = (err.message || '').includes('429') || err.httpCode === 429;\nreturn [{ json: { is429, message: err.message || 'API rate limit or connection timeout', workflow: $input.first().json.workflow?.name } }];"},"notes":"Determines whether the fault is a transient 429 rate limit or fatal syntax failure."},{"name":"Is rate limit (429)?","type":"n8n-nodes-base.if","typeVersion":2,"position":[440,0],"parameters":{"conditions":{"boolean":[{"value1":"={{$json.is429}}","value2":true}]}},"notes":"Routes transient rate-limit spikes to automated backoff recovery."},{"name":"Exponential backoff retry","type":"n8n-nodes-base.code","typeVersion":2,"position":[660,-60],"parameters":{"jsCode":"return [{ json: { recovered: true, strategy: 'Exponential backoff (2.0s jitter)', status: 'Recovered' } }];"},"notes":"Pauses execution momentarily and smoothly re-executes the affected node."},{"name":"Alert engineering on Slack","type":"n8n-nodes-base.slack","typeVersion":2,"position":[660,60],"parameters":{"channel":"#ops-incidents","text":"=⚠️ Unhandled error in workflow: {{$json.workflow}}. Error: {{$json.message}}"},"notes":"Sends urgent diagnostics to DevOps engineers if automatic retry cannot resolve."},{"name":"Respond with recovery telemetry","type":"n8n-nodes-base.respondToWebhook","typeVersion":1,"position":[880,0],"parameters":{"respondWith":"json","responseBody":"={{JSON.stringify($json)}}"},"notes":"Returns health status back to the Command Center status pill and terminal log."}],"connections":{"Error Trigger (Global)":{"main":[[{"node":"Classify failure cause","type":"main","index":0}]]},"Classify failure cause":{"main":[[{"node":"Is rate limit (429)?","type":"main","index":0}]]},"Is rate limit (429)?":{"main":[[{"node":"Exponential backoff retry","type":"main","index":0}],[{"node":"Alert engineering on Slack","type":"main","index":0}]]},"Exponential backoff retry":{"main":[[{"node":"Respond with recovery telemetry","type":"main","index":0}]]},"Alert engineering on Slack":{"main":[[{"node":"Respond with recovery telemetry","type":"main","index":0}]]}},"meta":{"autoops":{"cat":"System Health","covers":["err"],"plain":{"what":"Catches failed nodes globally, executes backoff retries on rate limits, and notifies engineering.","when":"Any external API returns a 429 or drops a connection.","result":"Workflows heal automatically without crashing, guaranteeing 99.9% uptime for business operations.","saves":"Prevents silent workflow breakdowns and eliminates emergency debugging fires"},"take":{"Is rate limit (429)?":0},"sample":{"Error Trigger (Global)":"Caught upstream error: 429 Too Many Requests","Classify failure cause":"Identified transient API rate limit threshold","Is rate limit (429)?":"Matched 429 pattern → Activated backoff strategy","Exponential backoff retry":"Executed 2.0s delay with jitter → Upstream connection restored","Respond with recovery telemetry":"System health restored to 'All systems operational'"},"live":{"key":"error","mode":"respond"},"toolNotes":{"n8n":"Best choice: n8n Error Trigger captures execution metadata across any workflow in your workspace natively.","make":"Requires error handler directives on each individual module.","zapier":"Has basic auto-replay on Company plans, but lacks programmatic custom backoff control."}}}}};
+  </script>
 
-    import { initRecruitmentModule } from './src/modules/recruitment.js';
-    import { initIntelligenceModule } from './src/modules/intelligence.js';
-    import { initCommerceModule } from './src/modules/commerce.js';
-    import { initChatVoiceModule } from './src/modules/chatvoice.js';
-    import { initMarketingModule } from './src/modules/marketing.js';
-
-    // 1. Initialize Theme
-    const themeManager = initTheme();
-    document.getElementById('btn-toggle-theme').addEventListener('click', () => themeManager.toggle());
-
-    // 2. Initialize Log & Pipeline
-    initLog(document.getElementById('log'), document.getElementById('btn-clear-log'));
-    initPipeline(document.getElementById('pipe'));
-
-    // 3. Initialize Coverage Tracker
-    const coverage = new CoverageTracker({
-      barEl: document.getElementById('cb'),
-      countEl: document.getElementById('cn'),
-      chipsEl: document.getElementById('chips'),
-      covEl: document.getElementById('cov')
-    });
-
-    // 4. Initialize Drawer
-    const drawer = new WorkflowDrawer(document.getElementById('workflow-drawer'), engine);
-
-    // 5. Connect Settings
-    const modalSettings = document.getElementById('modal-settings');
-    const inputBaseUrl = document.getElementById('settings-base-url');
-    const checkLiveMode = document.getElementById('settings-live-mode');
-
-    const savedCfg = JSON.parse(localStorage.getItem('autoops_config') || '{}');
-    if (savedCfg.baseUrl) inputBaseUrl.value = savedCfg.baseUrl;
-    if (savedCfg.liveMode) checkLiveMode.checked = savedCfg.liveMode;
-    engine.setLiveConfig(savedCfg.baseUrl, savedCfg.liveMode);
-
-    document.getElementById('btn-open-settings').addEventListener('click', () => modalSettings.showModal());
-    document.getElementById('btn-save-settings').addEventListener('click', () => {
-      const baseUrl = inputBaseUrl.value.trim();
-      const liveMode = checkLiveMode.checked;
-      localStorage.setItem('autoops_config', JSON.stringify({ baseUrl, liveMode }));
-      engine.setLiveConfig(baseUrl, liveMode);
-      modalSettings.close();
-      bus.emit('log', {
-        source: 'Config',
-        message: `Live mode ${liveMode ? 'ACTIVATED' : 'OFF'} (${baseUrl || 'Local Proxy'})`,
-        level: 'wn'
-      });
-    });
-
-    // 6. Connect Fault Toggle & Health Light
-    const faultToggle = document.getElementById('fault-toggle');
-    faultToggle.addEventListener('change', () => {
-      engine.setFaultInjection(faultToggle.checked);
-      bus.emit('log', {
-        source: 'Fault Injector',
-        message: faultToggle.checked ? 'API fault injection ARMED (429 rate limit test on 2nd node)' : 'Fault injection DISARMED',
-        level: faultToggle.checked ? 'wn' : 'ok'
-      });
-    });
-
-    bus.on('run:fault', () => {
-      document.getElementById('hd').className = 'dot err';
-      document.getElementById('ht').textContent = 'Fault caught: retrying with backoff';
-    });
-
-    bus.on('run:fault:recovered', () => {
-      document.getElementById('hd').className = 'dot';
-      document.getElementById('ht').textContent = 'All systems operational (Recovered)';
-    });
-
-    bus.on('run:done', () => {
-      document.getElementById('hd').className = 'dot';
-      document.getElementById('ht').textContent = 'All systems operational';
-    });
-
-    // 7. Tab Navigation
-    const navButtons = document.querySelectorAll('nav#nav button');
-    const panels = document.querySelectorAll('.pn');
-    function selectTab(index) {
-      navButtons.forEach((b, i) => b.classList.toggle('on', i === index));
-      panels.forEach((p, i) => p.classList.toggle('on', i === index));
-    }
-    navButtons.forEach((btn, idx) => {
-      btn.addEventListener('click', () => selectTab(idx));
-    });
-
-    // Connect inspect button for Tab 5 error handler
-    const inspectErrorBtn = document.getElementById('inspect-error');
-    if (inspectErrorBtn) {
-      inspectErrorBtn.addEventListener('click', () => drawer.open('13-global-error-handler.json'));
-    }
-
-    // 8. Load all 13 Workflows from automations/*.json
-    const WORKFLOW_FILES = [
-      '01-lead-router.json',
-      '02-cv-scorer.json',
-      '03-interview-booking.json',
-      '04-transcript-dossier.json',
-      '05-payment-reconciler.json',
-      '06-low-stock-alert.json',
-      '07-debt-reminders.json',
-      '08-faq-chatbot-lead-score.json',
-      '09-voice-screening-postcall.json',
-      '10-outbound-call.json',
-      '11-content-studio.json',
-      '12-email-autoresponder-drip.json',
-      '13-global-error-handler.json'
-    ];
-
-    async function loadAllWorkflows() {
-      for (const file of WORKFLOW_FILES) {
-        try {
-          const resp = await fetch(`automations/${file}`);
-          if (resp.ok) {
-            const data = await resp.json();
-            engine.register(file, data);
+  <!-- Self-Contained App Engine (Zero external JS module 404s) -->
+  <script>
+    (function() {
+      // 1. Decoupled Pub/Sub Event Bus
+      class EventBus {
+        constructor() { this.listeners = new Map(); }
+        on(event, handler) {
+          if (!this.listeners.has(event)) this.listeners.set(event, new Set());
+          this.listeners.get(event).add(handler);
+          return () => this.off(event, handler);
+        }
+        off(event, handler) {
+          if (this.listeners.has(event)) this.listeners.get(event).delete(handler);
+        }
+        emit(event, payload = {}) {
+          if (this.listeners.has(event)) {
+            for (const handler of this.listeners.get(event)) {
+              try { handler(payload); } catch (err) { console.error('[EventBus]', err); }
+            }
           }
-        } catch (e) {
-          console.warn(`Could not fetch automations/${file}:`, e);
         }
       }
-      bus.emit('log', {
-        source: 'Engine Registry',
-        message: `Registered ${engine.workflows.size} production n8n workflows with full Story/Flow/Blueprint schemas.`,
-        level: 'ok'
-      });
-    }
-    await loadAllWorkflows();
+      const bus = new EventBus();
 
-    // 9. Wire Business Modules
-    const modRecruitment = initRecruitmentModule({
-      containerEl: document.getElementById('tab-0'),
-      engine,
-      drawer
-    });
+      // 2. Glossary & Icons
+      const GLOSSARY = {
+        webhook: 'A dedicated web address that automatically triggers the workflow the instant an external system sends data to it.',
+        API: 'Application Programming Interface: A standardized protocol allowing different software systems to communicate and exchange data.',
+        CRM: 'Customer Relationship Management: The central software platform where client records, deals, and communication histories are maintained.',
+        trigger: 'The initializing event or rule (e.g. form submission, webhook, schedule timer) that sets an automation in motion.',
+        JSON: 'JavaScript Object Notation: A lightweight, human-readable data format universally used by web APIs.',
+        nurture: 'An automated, structured sequence of valuable messages sent over time to guide potential clients towards a purchase.',
+        ATS: 'Applicant Tracking System: Software used by recruiters to organize candidates, resumes, and interview stages.',
+        WebRTC: 'Web Real-Time Communication: A standard enabling direct, browser-to-browser voice and video calling without plugins.',
+        cron: 'A time-based job scheduler that automatically runs commands or scripts at fixed intervals or times.'
+      };
 
-    const modIntelligence = initIntelligenceModule({
-      containerEl: document.getElementById('tab-1'),
-      engine,
-      drawer
-    });
+      const KIND_ICONS = {
+        webhook: '⚡', scheduleTrigger: '⏰', if: '🔀', httpRequest: '🌐',
+        googleSheets: '📊', gmail: '✉️', slack: '💬', telegram: '✈️',
+        respondToWebhook: '↩️', noOp: '⏸️', code: '💻', airtable: '📑',
+        openAi: '🤖', calCom: '📅'
+      };
 
-    const modCommerce = initCommerceModule({
-      containerEl: document.getElementById('tab-2'),
-      engine,
-      drawer,
-      paystackModalEl: document.getElementById('modal-paystack')
-    });
-
-    const modChatVoice = initChatVoiceModule({
-      containerEl: document.getElementById('tab-3'),
-      engine,
-      drawer
-    });
-
-    const modMarketing = initMarketingModule({
-      containerEl: document.getElementById('tab-4'),
-      engine,
-      drawer
-    });
-
-    // 10. Run Full Demo Button
-    const btnRunAll = document.getElementById('btn-run-all-demo');
-    btnRunAll.addEventListener('click', async () => {
-      btnRunAll.disabled = true;
-      btnRunAll.textContent = 'Running Full Sequence…';
-
-      bus.emit('log', {
-        source: 'Master Demo',
-        message: 'Starting automated 6-module comprehensive demonstration…',
-        level: 'wn'
-      });
-
-      try {
-        selectTab(0);
-        await modRecruitment.runDemoSequence();
-
-        selectTab(1);
-        await modIntelligence.runDemoSequence();
-
-        selectTab(2);
-        await modCommerce.runDemoSequence();
-
-        selectTab(3);
-        await modChatVoice.runDemoSequence();
-
-        selectTab(4);
-        await modMarketing.runDemoSequence();
-
-        selectTab(5);
-        bus.emit('log', {
-          source: 'Master Demo',
-          message: `All modules executed! Total coverage: ${coverage.fired.size}/26 automations verified.`,
-          level: 'ok'
+      const getIcon = t => KIND_ICONS[(t || '').split('.').pop()] || '⚙️';
+      const escapeHtml = s => String(s || '').replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+      const annotateGlossary = s => {
+        const esc = escapeHtml(s);
+        const terms = Object.keys(GLOSSARY).join('|');
+        return esc.replace(new RegExp('\b(' + terms + ')\b', 'gi'), m => {
+          const key = Object.keys(GLOSSARY).find(k => k.toLowerCase() === m.toLowerCase());
+          return '<abbr tabindex="0" title="' + escapeHtml(GLOSSARY[key] || '') + '">' + m + '</abbr>';
         });
-      } catch (err) {
-        console.error('Demo sequence error:', err);
-      } finally {
-        btnRunAll.disabled = false;
-        btnRunAll.textContent = '▶ Run full demo';
-      }
-    });
+      };
 
-    // 11. Custom JSON Dropzone / Paste Card Engine
-    const engineDropzone = document.getElementById('engine-dropzone');
-    const engineFileInput = document.getElementById('engine-file-input');
-    const enginePasteJson = document.getElementById('engine-paste-json');
-    const btnAddPasted = document.getElementById('btn-add-pasted-card');
-    const engineMsg = document.getElementById('engine-msg');
-    const customCardsGrid = document.getElementById('custom-cards-grid');
+      const syntaxHighlight = obj => {
+        const jsonStr = escapeHtml(JSON.stringify(obj, null, 2));
+        return jsonStr.replace(/(&quot;(?:(?!&quot;).)*&quot;)(:)?|(true|false|null)|-?d+.?d*/g, (m, str, col) => {
+          if (str) return col ? '<i class="k">' + str + '</i>:' : '<i class="s">' + str + '</i>';
+          return '<i class="n">' + m + '</i>';
+        });
+      };
 
-    function handleNewWorkflowJson(jsonStr) {
-      let parsed;
-      try {
-        parsed = JSON.parse(jsonStr);
-      } catch (err) {
-        engineMsg.textContent = `Invalid JSON: ${err.message}`;
-        engineMsg.className = 'er';
-        return;
-      }
-
-      const errs = engine.validate(parsed);
-      if (errs.length > 0) {
-        engineMsg.textContent = errs.join(' ');
-        engineMsg.className = 'er';
-        return;
-      }
-
-      const key = `custom_${Date.now()}`;
-      engine.register(key, parsed);
-      const card = createCardElement(parsed, engine, { key });
-      customCardsGrid.prepend(card);
-
-      engineMsg.textContent = `✓ Added "${parsed.name}" to the interactive cards below!`;
-      engineMsg.className = 'ok';
-      if (enginePasteJson) enginePasteJson.value = '';
-    }
-
-    if (btnAddPasted) {
-      btnAddPasted.addEventListener('click', () => {
-        const val = enginePasteJson.value.trim();
-        if (val) handleNewWorkflowJson(val);
-      });
-    }
-
-    if (engineDropzone && engineFileInput) {
-      engineDropzone.addEventListener('click', () => engineFileInput.click());
-      engineDropzone.addEventListener('dragover', e => { e.preventDefault(); engineDropzone.classList.add('h'); });
-      engineDropzone.addEventListener('dragleave', () => engineDropzone.classList.remove('h'));
-      engineDropzone.addEventListener('drop', async e => {
-        e.preventDefault();
-        engineDropzone.classList.remove('h');
-        for (const f of e.dataTransfer.files) {
-          handleNewWorkflowJson(await f.text());
+      const stripMeta = wf => {
+        const c = JSON.parse(JSON.stringify(wf));
+        if (c.meta && c.meta.autoops) {
+          delete c.meta.autoops;
+          if (!Object.keys(c.meta).length) delete c.meta;
         }
-      });
-      engineFileInput.addEventListener('change', async () => {
-        for (const f of engineFileInput.files) {
-          handleNewWorkflowJson(await f.text());
+        return c;
+      };
+
+      // 3. Workflow Engine
+      class Engine {
+        constructor() {
+          this.workflows = new Map();
+          this.faultInjected = false;
+          this.liveMode = false;
+          this.baseUrl = '';
         }
-      });
-    }
+        setFaultInjection(on) { this.faultInjected = !!on; }
+        setLiveConfig(url, live) {
+          this.baseUrl = (url || '').trim().replace(/\/$/, '');
+          this.liveMode = !!live;
+        }
+        validate(wf) {
+          const e = [];
+          if (!wf || typeof wf !== 'object') return ['Invalid workflow object.'];
+          if (!Array.isArray(wf.nodes) || !wf.nodes.length) e.push('Workflow missing "nodes" array.');
+          if (!wf.connections || typeof wf.connections !== 'object') e.push('Workflow missing "connections" object.');
+          const p = wf?.meta?.autoops?.plain;
+          if (!p || !p.what || !p.when || !p.result) e.push('Workflow missing meta.autoops.plain with what, when, result.');
+          (wf?.nodes || []).forEach((n, i) => {
+            if (!n.name || !n.type) e.push('Node #' + (i + 1) + ' missing name or type.');
+            else if (!n.notes) e.push('Node "' + n.name + '" missing plain-English notes.');
+          });
+          return e;
+        }
+        plan(wf) {
+          const map = Object.fromEntries(wf.nodes.map(n => [n.name, n]));
+          const targetSet = new Set(wf.nodes.flatMap(n => Object.values(wf.connections[n.name] || {}).flat(2).map(c => c.node)));
+          const take = wf?.meta?.autoops?.take || {};
+          const seq = [];
+          const trigger = wf.nodes.find(n => !targetSet.has(n.name)) || wf.nodes[0];
+          const q = trigger ? [trigger.name] : [];
+          while (q.length) {
+            const cur = q.shift();
+            if (seq.includes(cur) || !map[cur]) continue;
+            seq.push(cur);
+            const node = map[cur];
+            const outs = wf.connections[cur]?.main || [];
+            if (node.type && (node.type.endsWith('.if') || node.type.includes('if'))) {
+              const bIdx = take[cur] ?? 0;
+              (outs[bIdx] || []).forEach(c => q.push(c.node));
+            } else {
+              outs.forEach(b => b.forEach(c => q.push(c.node)));
+            }
+          }
+          const skip = wf.nodes.map(n => n.name).filter(name => !seq.includes(name));
+          return { seq, skip, trigger: trigger?.name };
+        }
+        renderFlow(wf) {
+          const depths = {}, counts = {}, pos = {};
+          wf.nodes.forEach(n => depths[n.name] = 0);
+          for (let i = 0; i < 9; i++) {
+            wf.nodes.forEach(n => {
+              Object.values(wf.connections[n.name] || {}).flat(2).forEach(c => {
+                depths[c.node] = Math.max(depths[c.node] || 0, (depths[n.name] || 0) + 1);
+              });
+            });
+          }
+          wf.nodes.forEach(n => {
+            const d = depths[n.name] || 0;
+            counts[d] = counts[d] || 0;
+            pos[n.name] = [16 + d * 180, 16 + (counts[d]++) * 72];
+          });
+          const maxW = Math.max(...Object.values(pos).map(p => p[0])) + 160;
+          const maxH = Math.max(...Object.values(pos).map(p => p[1])) + 74;
+          const paths = wf.nodes.flatMap(n => {
+            return Object.values(wf.connections[n.name] || {}).flat(2).map(c => {
+              const [x1, y1] = pos[n.name];
+              const [x2, y2] = pos[c.node] || [x1 + 180, y1];
+              return '<path class="ed" d="M' + (x1 + 144) + ',' + (y1 + 24) + ' C' + (x1 + 166) + ',' + (y1 + 24) + ' ' + (x2 - 22) + ',' + (y2 + 24) + ' ' + x2 + ',' + (y2 + 24) + '" />';
+            });
+          }).join('');
+          const nodesSvg = wf.nodes.map(n => {
+            const [x, y] = pos[n.name];
+            const icon = getIcon(n.type);
+            const label = n.name.length > 18 ? n.name.slice(0, 17) + '…' : n.name;
+            const typeLabel = n.type.split('.').pop();
+            return '<g class="nd" data-n="' + escapeHtml(n.name) + '">' +
+              '<rect x="' + x + '" y="' + y + '" width="144" height="48" rx="8" />' +
+              '<text x="' + (x + 10) + '" y="' + (y + 20) + '">' + icon + ' ' + escapeHtml(label) + '</text>' +
+              '<text x="' + (x + 10) + '" y="' + (y + 37) + '" fill="var(--mut)" style="fill:var(--mut)">' + escapeHtml(typeLabel) + '</text>' +
+              '</g>';
+          }).join('');
+          return '<div style="overflow-x:auto;padding:8px 0;"><svg viewBox="0 0 ' + maxW + ' ' + maxH + '" width="' + maxW + '" height="' + maxH + '" role="img">' + paths + nodesSvg + '</svg></div>';
+        }
+        register(key, wf) {
+          const e = this.validate(wf);
+          if (e.length) return { success: false, errors: e };
+          const planned = this.plan(wf);
+          this.workflows.set(key, { workflow: wf, planned, key });
+          return { success: true, key };
+        }
+        get(key) { return this.workflows.get(key); }
+        async run(keyOrWf, payload = {}) {
+          let item;
+          if (typeof keyOrWf === 'string') {
+            item = this.workflows.get(keyOrWf);
+            if (!item) throw new Error('Workflow ' + keyOrWf + ' not found in engine registry.');
+          } else {
+            const k = 'custom_' + Date.now();
+            this.register(k, keyOrWf);
+            item = this.workflows.get(k);
+          }
+          const { workflow, planned, key } = item;
+          const runId = 'run_' + Math.random().toString(36).substring(2, 9);
+          const covers = workflow.meta?.autoops?.covers || [];
+          const samples = workflow.meta?.autoops?.sample || {};
+          const liveKey = workflow.meta?.autoops?.live?.key || key;
+          const tStart = Date.now();
 
-    document.getElementById('btn-open-add-modal').addEventListener('click', () => {
-      selectTab(5);
-      engineDropzone.scrollIntoView({ behavior: 'smooth' });
-    });
+          bus.emit('run:start', { id: key, runId, name: workflow.name, steps: planned.seq, skipped: planned.skip, live: this.liveMode });
 
-    document.getElementById('btn-book-audit').addEventListener('click', () => {
-      selectTab(0);
-      document.getElementById('tab-0').scrollIntoView({ behavior: 'smooth' });
-      bus.emit('log', {
-        source: 'Booking Flow',
-        message: 'Directing visitor to Cal.com appointment slot selection.',
-        level: 'ok'
+          let liveResult = null;
+          if (this.liveMode) {
+            try {
+              const url = this.baseUrl ? this.baseUrl + '/webhook/' + liveKey : '/api/hook/' + liveKey;
+              bus.emit('log', { source: 'n8n Live', message: 'Dispatching webhook to ' + url, level: 'wn' });
+              const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ source: 'autoops-site', ts: Date.now(), ...payload })
+              });
+              if (resp.ok) {
+                liveResult = await resp.json();
+                bus.emit('log', { source: 'n8n Live', message: 'Response received 200 OK', level: 'ok' });
+              } else {
+                bus.emit('log', { source: 'n8n Live', message: 'HTTP ' + resp.status + ' - Replaying simulated flow', level: 'wn' });
+              }
+            } catch (err) {
+              bus.emit('log', { source: 'n8n Live', message: 'Connection error (' + err.message + ') - Using simulation replay', level: 'wn' });
+            }
+          }
+
+          for (let i = 0; i < planned.seq.length; i++) {
+            const node = planned.seq[i];
+            bus.emit('node:start', { runId, node, index: i, total: planned.seq.length });
+
+            if (i === 1 && this.faultInjected) {
+              bus.emit('run:fault', { runId, node, error: 'HTTP 429 Too Many Requests' });
+              bus.emit('log', { source: node, message: '429 Rate limit encountered on upstream API', level: 'er' });
+              await new Promise(r => setTimeout(r, 900));
+              bus.emit('log', { source: 'Error Handler', message: 'Exponential backoff triggered (2.0s delay) → Restored connection', level: 'wn' });
+              bus.emit('run:fault:recovered', { runId, node });
+              bus.emit('automation:covered', { code: 'err' });
+            }
+
+            await new Promise(r => setTimeout(r, 550));
+            const summary = (liveResult && liveResult.steps && liveResult.steps[i]?.summary) || samples[node] || ('Processed ' + node + ' successfully.');
+            bus.emit('node:done', { runId, node, summary, ms: Date.now() - tStart });
+            bus.emit('log', { source: node, message: summary, level: 'ok' });
+          }
+
+          planned.skip.forEach(node => bus.emit('node:skipped', { runId, node }));
+          covers.forEach(c => bus.emit('automation:covered', { code: c }));
+
+          const duration = Date.now() - tStart;
+          bus.emit('run:done', { runId, id: key, ms: duration, covers, result: liveResult });
+          return { runId, duration, liveResult };
+        }
+      }
+      const engine = new Engine();
+
+      // 4. UI: Theme Manager
+      const initTheme = () => {
+        const root = document.documentElement;
+        const saved = localStorage.getItem('autoops_theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        root.dataset.theme = saved || (prefersDark ? 'dark' : 'light');
+        return {
+          toggle() {
+            const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+            root.dataset.theme = next;
+            localStorage.setItem('autoops_theme', next);
+            return next;
+          }
+        };
+      };
+
+      // 5. UI: Log Terminal
+      const initLog = (logEl, clearBtn) => {
+        if (!logEl) return;
+        const append = ({ source = 'System', message = '', level = '' }) => {
+          const timeStr = new Date().toLocaleTimeString('en-GB', { hour12: false });
+          const row = document.createElement('div');
+          if (level) row.className = level;
+          row.innerHTML = '<span class="ts">[' + timeStr + ']</span> <b>' + source + ':</b> ' + message;
+          logEl.appendChild(row);
+          logEl.scrollTop = logEl.scrollHeight;
+        };
+        bus.on('log', append);
+        if (clearBtn) clearBtn.addEventListener('click', () => {
+          logEl.innerHTML = '';
+          append({ source: 'System', message: 'Activity log cleared.', level: 'wn' });
+        });
+        append({ source: 'AutoOps Kernel', message: 'Event bus initialized. All 6 operational modules ready.', level: 'ok' });
+      };
+
+      // 6. UI: Pipeline Ribbon
+      const initPipeline = (pipeEl) => {
+        if (!pipeEl) return;
+        bus.on('run:start', ({ name, steps = [], skipped = [] }) => {
+          if (!steps.length) return;
+          const nodesHtml = steps.map((s, idx) =>
+            '<span class="node" id="pipe-node-' + idx + '" data-node-name="' + escapeHtml(s) + '">' +
+            '<span class="pipe-node-idx">' + (idx + 1) + '</span> ' + escapeHtml(s) +
+            '</span>'
+          ).join('<span style="color:var(--mut);font-size:11px;">→</span>');
+
+          const skippedHtml = skipped.length ? '<span style="color:var(--mut);font-size:11px;margin-left:8px;">(Skipped: ' + skipped.map(escapeHtml).join(', ') + ')</span>' : '';
+          pipeEl.innerHTML = '<span class="pipe-title">' + escapeHtml(name) + ':</span>' + nodesHtml + skippedHtml;
+        });
+
+        bus.on('node:start', ({ index }) => {
+          const el = document.getElementById('pipe-node-' + index);
+          if (el) { el.classList.remove('done', 'skip'); el.classList.add('on'); }
+        });
+        bus.on('node:done', ({ node }) => {
+          const el = pipeEl.querySelector('[data-node-name="' + CSS.escape(node) + '"]');
+          if (el) { el.classList.remove('on'); el.classList.add('done'); }
+        });
+        bus.on('node:skipped', ({ node }) => {
+          const el = pipeEl.querySelector('[data-node-name="' + CSS.escape(node) + '"]');
+          if (el) { el.classList.remove('on', 'done'); el.classList.add('skip'); }
+        });
+      };
+
+      // 7. UI: Coverage Tracker (26 Automations)
+      const AUTOMATION_CATALOG = {
+        lead: 'Lead auto-responder', route: 'Budget routing', crm: 'CRM sync',
+        cv: 'CV parsing', score: 'Match scoring', ats: 'ATS logging',
+        book: 'Interview booking', rem: 'SMS/WA reminders',
+        tr: 'Meeting summarizer', dos: 'Dossier builder',
+        pay: 'Payment reconciliation', led: 'Ledger update', inv: 'PDF invoice', onb: 'Onboarding invite',
+        stk: 'Low-stock alert', debt: 'Debt reminders',
+        chat: 'FAQ chatbot', qual: 'Lead qualification',
+        voice: 'Voice screening', out: 'Outbound call',
+        cont: 'Social content', sch: 'Content scheduling',
+        eml: 'Email auto-draft', drip: 'Drip progression',
+        err: 'Error recovery', post: 'Post-call summary'
+      };
+
+      class CoverageTracker {
+        constructor({ barEl, countEl, chipsEl, covEl }) {
+          this.barEl = barEl; this.countEl = countEl; this.chipsEl = chipsEl; this.covEl = covEl;
+          this.fired = new Set();
+          this.total = Object.keys(AUTOMATION_CATALOG).length;
+          this.render();
+          bus.on('automation:covered', ({ code }) => this.fire(code));
+          bus.on('run:done', ({ covers = [] }) => covers.forEach(c => this.fire(c)));
+        }
+        render() {
+          if (this.chipsEl) {
+            this.chipsEl.innerHTML = Object.entries(AUTOMATION_CATALOG).map(([k, v]) => '<span id="chip_' + k + '" title="' + k + ': ' + v + '">' + v + '</span>').join('');
+          }
+          if (this.covEl) {
+            this.covEl.innerHTML = Object.entries(AUTOMATION_CATALOG).map(([k, v]) => '<span class="b" id="cov_' + k + '" style="opacity:0.5;margin:3px;">' + v + '</span>').join('');
+          }
+          this.update();
+        }
+        update() {
+          const count = this.fired.size;
+          if (this.countEl) this.countEl.textContent = count + '/' + this.total;
+          if (this.barEl) this.barEl.style.width = Math.round((count / this.total) * 100) + '%';
+        }
+        fire(k) {
+          if (!AUTOMATION_CATALOG[k] || this.fired.has(k)) return;
+          this.fired.add(k);
+          const chip = document.getElementById('chip_' + k);
+          if (chip) chip.classList.add('f');
+          const cov = document.getElementById('cov_' + k);
+          if (cov) { cov.style.opacity = '1'; cov.classList.add('ok'); }
+          this.update();
+          if (this.fired.size === this.total) {
+            bus.emit('log', { source: 'Coverage', message: 'All 26 core business automations executed & verified!', level: 'ok' });
+          }
+        }
+      }
+
+      // 8. UI: Card Element & Drawer
+      const copyToClipboard = (text, btn) => {
+        const orig = btn.textContent;
+        const done = () => { btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = orig, 1300); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(fallback);
+        } else { fallback(); }
+        function fallback() {
+          const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); done(); } catch(e){}
+          ta.remove();
+        }
+      };
+
+      const downloadJson = (wf, btn) => {
+        const clean = stripMeta(wf);
+        const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(clean, null, 2));
+        const a = document.createElement('a'); a.href = dataStr;
+        a.download = (wf.name || 'workflow').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.json';
+        document.body.appendChild(a); a.click(); a.remove();
+        copyToClipboard(JSON.stringify(clean, null, 2), btn);
+      };
+
+      const createCardElement = (workflow, eng, options = {}) => {
+        const plain = workflow.meta?.autoops?.plain || { what: '', when: '', result: '', saves: '' };
+        const category = workflow.meta?.autoops?.cat || 'Operations';
+        const toolNotes = workflow.meta?.autoops?.toolNotes || {
+          n8n: 'Native execution engine, zero cloud lock-in, handles binary buffers directly.',
+          make: 'Great visual branching and modular mapping; higher cost at high task volume.',
+          zapier: 'Fastest 2-step setup for quick client wins; limited multi-step logic on basic tier.'
+        };
+        const card = document.createElement('article');
+        card.className = 'c automation-card';
+        card.dataset.key = options.key || workflow.name;
+
+        card.innerHTML =
+          '<div class="c-head">' +
+            '<div>' +
+              '<h2 style="margin-bottom:4px;">' + escapeHtml(workflow.name) + '</h2>' +
+              '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">' +
+                '<span class="b ok">' + escapeHtml(category) + '</span>' +
+                '<span class="b">' + workflow.nodes.length + ' nodes</span>' +
+                '<span class="b wn">Tool-Agnostic</span>' +
+              '</div>' +
+            '</div>' +
+            '<button class="pr btn-run-card" style="padding:5px 12px;font-size:12.5px;">▶ Run Live</button>' +
+          '</div>' +
+          '<div class="tabs-nav" role="tablist">' +
+            '<button role="tab" aria-selected="true" data-tab="0">Story</button>' +
+            '<button role="tab" aria-selected="false" data-tab="1">Flow</button>' +
+            '<button role="tab" aria-selected="false" data-tab="2">n8n Blueprint</button>' +
+            '<button role="tab" aria-selected="false" data-tab="3">Tool Compare</button>' +
+          '</div>' +
+          '<div class="v-panel on" data-panel="0">' +
+            '<div class="facts">' +
+              '<div><b>What It Does</b>' + annotateGlossary(plain.what) + '</div>' +
+              '<div><b>Starts When</b>' + annotateGlossary(plain.when) + '</div>' +
+              '<div><b>You Get</b>' + annotateGlossary(plain.result) + '</div>' +
+              '<div><b>Time Saved</b>' + escapeHtml(plain.saves) + '</div>' +
+            '</div>' +
+            '<ol class="st">' +
+              workflow.nodes.map((n, idx) =>
+                '<li data-n="' + escapeHtml(n.name) + '">' +
+                  '<span class="q">' + (idx + 1) + '</span>' +
+                  '<div><p><b>' + escapeHtml(n.name) + ':</b> ' + annotateGlossary(n.notes || '') + '</p><small class="step-status"></small></div>' +
+                '</li>'
+              ).join('') +
+            '</ol>' +
+          '</div>' +
+          '<div class="v-panel" data-panel="1">' +
+            eng.renderFlow(workflow) +
+            '<p style="color:var(--mut);font-size:11.5px;margin:8px 0 0;">Interactive flow: Active node glows orange. Green marks completed steps. Faded nodes represent alternate branches.</p>' +
+          '</div>' +
+          '<div class="v-panel" data-panel="2">' +
+            '<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">' +
+              '<button class="btn btn-copy-json" style="font-size:12px;">Copy for n8n</button>' +
+              '<button class="btn btn-dl-json" style="font-size:12px;">Download .json</button>' +
+              '<span style="font-size:11.5px;color:var(--mut);">100% Importable (strips AutoOps meta)</span>' +
+            '</div>' +
+            workflow.nodes.map(n =>
+              '<div class="blk" data-n="' + escapeHtml(n.name) + '">' +
+                '<div class="why"><b>Step Logic:</b> ' + annotateGlossary(n.notes || '') + '</div>' +
+                '<pre>' + syntaxHighlight(n) + '</pre>' +
+              '</div>'
+            ).join('') +
+            '<div class="blk"><div class="why"><b>Execution Graph:</b></div><pre>' + syntaxHighlight(workflow.connections) + '</pre></div>' +
+          '</div>' +
+          '<div class="v-panel" data-panel="3">' +
+            '<div class="facts" style="grid-template-columns:1fr;margin-top:10px;">' +
+              '<div><b>n8n (Selected Choice)</b>' + escapeHtml(toolNotes.n8n) + '</div>' +
+              '<div><b>Make.com Equivalent</b>' + escapeHtml(toolNotes.make) + '</div>' +
+              '<div><b>Zapier Equivalent</b>' + escapeHtml(toolNotes.zapier) + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="rc" aria-live="polite"></div>';
+
+        // Tabs
+        const tabBtns = card.querySelectorAll('.tabs-nav button');
+        const panels = card.querySelectorAll('.v-panel');
+        tabBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const idx = btn.dataset.tab;
+            tabBtns.forEach(b => b.setAttribute('aria-selected', b === btn));
+            panels.forEach(p => p.classList.toggle('on', p.dataset.panel === idx));
+          });
+        });
+
+        // Actions
+        const cleanJsonStr = JSON.stringify(stripMeta(workflow), null, 2);
+        const copyBtn = card.querySelector('.btn-copy-json');
+        if (copyBtn) copyBtn.addEventListener('click', () => copyToClipboard(cleanJsonStr, copyBtn));
+        const dlBtn = card.querySelector('.btn-dl-json');
+        if (dlBtn) dlBtn.addEventListener('click', () => downloadJson(workflow, dlBtn));
+
+        const runBtn = card.querySelector('.btn-run-card');
+        if (runBtn) {
+          runBtn.addEventListener('click', async () => {
+            if (card.busy) return;
+            card.busy = true; runBtn.disabled = true; runBtn.textContent = 'Running…';
+            try { await eng.run(options.key || workflow.name); }
+            finally { card.busy = false; runBtn.disabled = false; runBtn.textContent = '▶ Run Live'; }
+          });
+        }
+
+        // Live Node Highlights
+        const markNode = (name, c) => {
+          card.querySelectorAll('[data-n="' + CSS.escape(name) + '"]').forEach(el => {
+            el.classList.remove('on', 'done', 'skip');
+            if (c) el.classList.add(c);
+          });
+        };
+
+        bus.on('run:start', ({ id, name, skipped = [] }) => {
+          if (id !== (options.key || workflow.name) && name !== workflow.name) return;
+          card.querySelectorAll('li small.step-status').forEach(s => s.textContent = '');
+          const rc = card.querySelector('.rc');
+          if (rc) rc.textContent = 'Executing automation pipeline…';
+          workflow.nodes.forEach(n => markNode(n.name, skipped.includes(n.name) ? 'skip' : ''));
+        });
+        bus.on('node:start', ({ node }) => markNode(node, 'on'));
+        bus.on('node:done', ({ node, summary }) => {
+          markNode(node, 'done');
+          const li = card.querySelector('li[data-n="' + CSS.escape(node) + '"]');
+          if (li) {
+            const st = li.querySelector('.step-status');
+            if (st) st.textContent = '✓ ' + summary;
+          }
+          const rc = card.querySelector('.rc');
+          if (rc) rc.textContent = '✓ ' + summary;
+        });
+        bus.on('node:skipped', ({ node }) => {
+          markNode(node, 'skip');
+          const li = card.querySelector('li[data-n="' + CSS.escape(node) + '"]');
+          if (li) {
+            const st = li.querySelector('.step-status');
+            if (st) st.textContent = 'Bypassed by conditional logic';
+          }
+        });
+        bus.on('run:done', ({ id, name, ms, covers }) => {
+          if (id !== (options.key || workflow.name) && name !== workflow.name) return;
+          const rc = card.querySelector('.rc');
+          if (rc) rc.textContent = '✓ Completed in ' + (ms / 1000).toFixed(1) + 's. Covered: [' + covers.join(', ') + ']';
+        });
+
+        return card;
+      };
+
+      class WorkflowDrawer {
+        constructor(dialogEl, eng) {
+          this.dialogEl = dialogEl;
+          this.engine = eng;
+          this.contentEl = dialogEl.querySelector('.drawer-content') || dialogEl;
+          dialogEl.addEventListener('click', e => {
+            const rect = dialogEl.getBoundingClientRect();
+            if (!(rect.top <= e.clientY && e.clientY <= rect.top + rect.height && rect.left <= e.clientX && e.clientX <= rect.left + rect.width)) {
+              this.dialogEl.close();
+            }
+          });
+        }
+        open(key) {
+          const item = this.engine.get(key);
+          if (!item) return;
+          const cardEl = createCardElement(item.workflow, this.engine, { key });
+          this.contentEl.innerHTML =
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
+              '<span style="font-size:12px;font-weight:600;color:var(--mut);text-transform:uppercase;">Workflow Architecture Inspector</span>' +
+              '<button class="btn drawer-close" style="padding:3px 10px;font-size:12px;">Close ✕</button>' +
+            '</div>';
+          this.contentEl.appendChild(cardEl);
+          this.contentEl.querySelector('.drawer-close').addEventListener('click', () => this.dialogEl.close());
+          this.dialogEl.showModal();
+        }
+      }
+
+      // 9. Bootstrap & Wire Modules
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme
+        const themeManager = initTheme();
+        document.getElementById('btn-toggle-theme').addEventListener('click', () => themeManager.toggle());
+
+        // Log & Pipeline
+        initLog(document.getElementById('log'), document.getElementById('btn-clear-log'));
+        initPipeline(document.getElementById('pipe'));
+
+        // Coverage
+        const coverage = new CoverageTracker({
+          barEl: document.getElementById('cb'),
+          countEl: document.getElementById('cn'),
+          chipsEl: document.getElementById('chips'),
+          covEl: document.getElementById('cov')
+        });
+
+        // Drawer
+        const drawer = new WorkflowDrawer(document.getElementById('workflow-drawer'), engine);
+
+        // Pre-load all 13 built-in workflows from embedded catalog
+        if (window.__BUILTIN_WORKFLOWS__) {
+          Object.entries(window.__BUILTIN_WORKFLOWS__).forEach(([file, data]) => {
+            engine.register(file, data);
+          });
+          bus.emit('log', {
+            source: 'Engine Registry',
+            message: 'All 13 production workflows preloaded into memory (' + engine.workflows.size + ' total).',
+            level: 'ok'
+          });
+        }
+
+        // Settings Modal
+        const modalSettings = document.getElementById('modal-settings');
+        const inputBaseUrl = document.getElementById('settings-base-url');
+        const checkLiveMode = document.getElementById('settings-live-mode');
+        const savedCfg = JSON.parse(localStorage.getItem('autoops_config') || '{}');
+        if (savedCfg.baseUrl) inputBaseUrl.value = savedCfg.baseUrl;
+        if (savedCfg.liveMode) checkLiveMode.checked = savedCfg.liveMode;
+        engine.setLiveConfig(savedCfg.baseUrl, savedCfg.liveMode);
+
+        document.getElementById('btn-open-settings').addEventListener('click', () => modalSettings.showModal());
+        document.getElementById('btn-save-settings').addEventListener('click', () => {
+          const baseUrl = inputBaseUrl.value.trim();
+          const liveMode = checkLiveMode.checked;
+          localStorage.setItem('autoops_config', JSON.stringify({ baseUrl, liveMode }));
+          engine.setLiveConfig(baseUrl, liveMode);
+          modalSettings.close();
+          bus.emit('log', { source: 'Config', message: 'Live mode ' + (liveMode ? 'ACTIVATED' : 'OFF') + ' (' + (baseUrl || 'Local Proxy') + ')', level: 'wn' });
+        });
+
+        // Fault Injection
+        const faultToggle = document.getElementById('fault-toggle');
+        faultToggle.addEventListener('change', () => {
+          engine.setFaultInjection(faultToggle.checked);
+          bus.emit('log', {
+            source: 'Fault Injector',
+            message: faultToggle.checked ? 'API fault injection ARMED (429 rate limit test on 2nd node)' : 'Fault injection DISARMED',
+            level: faultToggle.checked ? 'wn' : 'ok'
+          });
+        });
+        bus.on('run:fault', () => {
+          document.getElementById('hd').className = 'dot err';
+          document.getElementById('ht').textContent = 'Fault caught: retrying with backoff';
+        });
+        bus.on('run:fault:recovered', () => {
+          document.getElementById('hd').className = 'dot';
+          document.getElementById('ht').textContent = 'All systems operational (Recovered)';
+        });
+        bus.on('run:done', () => {
+          document.getElementById('hd').className = 'dot';
+          document.getElementById('ht').textContent = 'All systems operational';
+        });
+
+        // Navigation Tabs
+        const navButtons = document.querySelectorAll('nav#nav button');
+        const panels = document.querySelectorAll('.pn');
+        function selectTab(i) {
+          navButtons.forEach((b, idx) => b.classList.toggle('on', idx === i));
+          panels.forEach((p, idx) => p.classList.toggle('on', idx === i));
+        }
+        navButtons.forEach((btn, idx) => btn.addEventListener('click', () => selectTab(idx)));
+
+        // Connect Inspect Buttons
+        const inspectMap = {
+          'inspect-inq': '01-lead-router.json',
+          'inspect-cv': '02-cv-scorer.json',
+          'inspect-booking': '03-interview-booking.json',
+          'inspect-tr': '04-transcript-dossier.json',
+          'inspect-pay': '05-payment-reconciler.json',
+          'inspect-stock': '06-low-stock-alert.json',
+          'inspect-debt': '07-debt-reminders.json',
+          'inspect-chat': '08-faq-chatbot-lead-score.json',
+          'inspect-voice': '09-voice-screening-postcall.json',
+          'inspect-outbound': '10-outbound-call.json',
+          'inspect-content': '11-content-studio.json',
+          'inspect-email': '12-email-autoresponder-drip.json',
+          'inspect-error': '13-global-error-handler.json'
+        };
+        Object.entries(inspectMap).forEach(([id, file]) => {
+          const btn = document.getElementById(id);
+          if (btn) btn.addEventListener('click', () => drawer.open(file));
+        });
+
+        // 10. Module Handlers
+        // Module 1: Recruitment
+        const btnInq = document.getElementById('btn-inq');
+        const outInq = document.getElementById('out-inq');
+        if (btnInq) {
+          btnInq.addEventListener('click', async () => {
+            const company = document.getElementById('inq-co').value.trim() || 'Lagos Logistics Ltd';
+            const role = document.getElementById('inq-ro').value.trim() || 'Head of Operations';
+            const budget = +document.getElementById('inq-bu').value || 120000;
+            btnInq.disabled = true; btnInq.textContent = 'Processing…';
+            try {
+              await engine.run('01-lead-router.json', { company, role, budget });
+              outInq.textContent = budget >= 50000
+                ? '✓ Priority Routing (₦' + budget.toLocaleString() + ' ≥ ₦50k): Senior recruiter alerted via Slack. Personalized auto-responder sent.'
+                : '✓ Nurture Routing (₦' + budget.toLocaleString() + ' < ₦50k): Added to automated nurture drip. Confirmation sent.';
+            } finally { btnInq.disabled = false; btnInq.textContent = 'Send Inquiry'; }
+          });
+        }
+
+        const dropzone = document.getElementById('cv-drop');
+        const fileInput = document.getElementById('cv-fi');
+        const outCv = document.getElementById('out-cv');
+        const hash = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+        async function processCV(name, sz) {
+          if (outCv) outCv.innerHTML = '<span style="color:var(--mut);">AI multimodal vision analyzing CV layout and skills…</span>';
+          try {
+            const res = await engine.run('02-cv-scorer.json', { fileName: name, fileSize: sz });
+            const score = res.liveResult?.score ?? (74 + (hash(name + sz) % 22));
+            const allSkills = ['n8n', 'Make.com', 'Zapier', 'Paystack API', 'Webhooks', 'Airtable', 'Gemini Vision'];
+            const skills = allSkills.filter((_, i) => (hash(name) >> i) & 1).slice(0, 4);
+            if (skills.length < 2) skills.push('n8n', 'Webhooks');
+            const circ = 2 * Math.PI * 34;
+            const strokeDash = ((circ * score) / 100) + ' ' + circ;
+            outCv.innerHTML =
+              '<svg class="ring" viewBox="0 0 84 84">' +
+                '<circle cx="42" cy="42" r="34" fill="none" stroke="var(--ln)" stroke-width="8" />' +
+                '<circle cx="42" cy="42" r="34" fill="none" stroke="var(--ac)" stroke-width="8" stroke-linecap="round" stroke-dasharray="' + strokeDash + '" transform="rotate(-90 42 42)" />' +
+                '<text x="42" y="49" text-anchor="middle">' + score + '</text>' +
+              '</svg>' +
+              '<div class="out" style="display:block;flex:1;margin:0;font:12px 'JetBrains Mono',monospace;">' +
+              '{\n  "candidate": "' + name.replace(/[-_.]/g, ' ').replace(/(pdf|docx)$/i, '').trim() + '",\n  "match_score": ' + score + ',\n  "verified_skills": ' + JSON.stringify(skills) + ',\n  "ats_status": "Logged to Sheet Row 42"\n}' +
+              '</div>';
+          } catch(e) { outCv.innerHTML = '<span class="er">Error: ' + e.message + '</span>'; }
+        }
+        if (dropzone && fileInput) {
+          dropzone.addEventListener('click', () => fileInput.click());
+          dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('h'); });
+          dropzone.addEventListener('dragleave', () => dropzone.classList.remove('h'));
+          dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('h'); if (e.dataTransfer.files[0]) processCV(e.dataTransfer.files[0].name, e.dataTransfer.files[0].size); });
+          fileInput.addEventListener('change', () => { if (fileInput.files[0]) processCV(fileInput.files[0].name, fileInput.files[0].size); });
+        }
+        const btnSampleCv = document.getElementById('btn-sample-cv');
+        if (btnSampleCv) btnSampleCv.addEventListener('click', () => processCV('Amaka_Obi_Senior_Automation_CV.pdf', 184000));
+
+        const slotsEl = document.getElementById('booking-slots');
+        const outBooking = document.getElementById('out-booking');
+        const SLOTS = ['Mon 10:00', 'Mon 14:00', 'Tue 09:30', 'Tue 15:00', 'Wed 11:00', 'Thu 16:30'];
+        if (slotsEl) {
+          slotsEl.innerHTML = SLOTS.map(s => '<button class="btn-slot" data-slot="' + s + '">' + s + '</button>').join('');
+          slotsEl.querySelectorAll('.btn-slot').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              slotsEl.querySelectorAll('.btn-slot').forEach(b => b.classList.remove('on'));
+              btn.classList.add('on');
+              const slot = btn.dataset.slot;
+              outBooking.textContent = 'Locking calendar slot: ' + slot + '…';
+              try {
+                await engine.run('03-interview-booking.json', { slot });
+                outBooking.textContent = '✓ Confirmed for ' + slot + '. Google Meet invite generated; automated Termii SMS queued for T-24h and WhatsApp for T-1h.';
+              } catch(e) { outBooking.textContent = 'Error: ' + e.message; }
+            });
+          });
+        }
+
+        // Module 2: Intelligence & Dossier
+        const btnGenDossier = document.getElementById('btn-generate-dossier');
+        const outDossier = document.getElementById('dossier-output');
+        if (btnGenDossier) {
+          btnGenDossier.addEventListener('click', async () => {
+            const t = document.getElementById('tr-input').value.trim();
+            btnGenDossier.disabled = true; btnGenDossier.textContent = 'Analyzing…';
+            outDossier.innerHTML = '<span style="color:var(--mut);">Gemini AI parsing competencies and salary requirements…</span>';
+            try {
+              await engine.run('04-transcript-dossier.json', { transcript: t });
+              outDossier.innerHTML =
+                '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
+                  '<h3 style="margin:0;font-size:16px;color:var(--ink);">Amaka Obi</h3>' +
+                  '<span class="b ok">✓ Recommended for Interview</span>' +
+                '</div>' +
+                '<div style="margin-bottom:8px;"><span style="font-size:11.5px;color:var(--mut);font-weight:600;text-transform:uppercase;">Core Competencies</span><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;"><span class="b">n8n</span><span class="b">Make.com</span><span class="b">Paystack API</span><span class="b">Vapi Voice Agent</span></div></div>' +
+                '<div style="margin-bottom:8px;"><span style="font-size:11.5px;color:var(--mut);font-weight:600;text-transform:uppercase;">Demonstrated Business Impact</span><p style="margin:2px 0 0;font-size:12.5px;">• Built Paystack payment reconciler cut month-end close from 3 days to 4 hours.<br>• Deployed 24/7 Vapi AI voice screening agent.</p></div>' +
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;background:var(--bg);padding:8px 10px;border-radius:8px;font-size:12px;"><div><b>Notice:</b> 2 weeks</div><div><b>Target:</b> ₦450k/mo</div></div>';
+            } finally { btnGenDossier.disabled = false; btnGenDossier.textContent = 'Generate Dossier'; }
+          });
+        }
+
+        // Module 3: Commerce & Finance
+        const modalPay = document.getElementById('modal-paystack');
+        const btnOpenPay = document.getElementById('btn-open-pay');
+        const btnConfirmPay = document.getElementById('btn-confirm-pay');
+        const outPay = document.getElementById('out-pay');
+        if (btnOpenPay) btnOpenPay.addEventListener('click', () => modalPay.showModal());
+
+        const inventory = [
+          { name: 'Wireless 4G Routers', qty: 14 },
+          { name: 'SIM Activation Packs', qty: 8 },
+          { name: 'Solar Power Banks', qty: 22 },
+          { name: 'POS Thermal Paper Rolls', qty: 31 }
+        ];
+        const tableInv = document.getElementById('table-inventory');
+        function renderInv() {
+          if (!tableInv) return;
+          tableInv.innerHTML =
+            '<thead><tr><th>Item SKU</th><th>Stock Qty</th><th>Status</th><th style="text-align:right;">Adjust</th></tr></thead>' +
+            '<tbody>' +
+              inventory.map((item, idx) =>
+                '<tr>' +
+                  '<td><b>' + item.name + '</b></td>' +
+                  '<td>' + item.qty + ' units</td>' +
+                  '<td>' + (item.qty < 10 ? '<span class="b er">Low Stock (&lt;10)</span>' : '<span class="b ok">Healthy</span>') + '</td>' +
+                  '<td style="text-align:right;"><button class="btn btn-dec" data-i="' + idx + '" style="padding:2px 8px;font-size:12px;">−</button> <button class="btn btn-inc" data-i="' + idx + '" style="padding:2px 8px;font-size:12px;">+</button></td>' +
+                '</tr>'
+              ).join('') +
+            '</tbody>';
+          tableInv.querySelectorAll('.btn-dec').forEach(b => b.onclick = () => {
+            inventory[+b.dataset.i].qty = Math.max(0, inventory[+b.dataset.i].qty - 1);
+            renderInv();
+            bus.emit('log', { source: 'Warehouse DB', message: inventory[+b.dataset.i].name + ' → ' + inventory[+b.dataset.i].qty });
+          });
+          tableInv.querySelectorAll('.btn-inc').forEach(b => b.onclick = () => {
+            inventory[+b.dataset.i].qty += 1;
+            renderInv();
+            bus.emit('log', { source: 'Warehouse DB', message: inventory[+b.dataset.i].name + ' → ' + inventory[+b.dataset.i].qty });
+          });
+        }
+        renderInv();
+        const btnStockCron = document.getElementById('btn-run-stock-cron');
+        if (btnStockCron) btnStockCron.addEventListener('click', async () => {
+          btnStockCron.disabled = true; btnStockCron.textContent = 'Running 08:00 Cron…';
+          try { await engine.run('06-low-stock-alert.json', { lowItems: inventory.filter(i => i.qty < 10) }); }
+          finally { btnStockCron.disabled = false; btnStockCron.textContent = 'Run Daily Stock Cron Now'; }
+        });
+
+        const ledger = [
+          { id: 'INV-101', customer: 'Ada Global Foods', amount: 48000, status: 'Paid' },
+          { id: 'INV-102', customer: 'Bello Tech Solutions', amount: 72000, status: 'Overdue' },
+          { id: 'INV-103', customer: 'Kemi Styles Boutique', amount: 15500, status: 'Unpaid' },
+          { id: 'INV-104', customer: 'Zenith Agritech Farms', amount: 90000, status: 'Overdue' }
+        ];
+        const tableLed = document.getElementById('table-ledger');
+        function renderLed() {
+          if (!tableLed) return;
+          tableLed.innerHTML =
+            '<thead><tr><th>Invoice</th><th>Customer</th><th>Amount (₦)</th><th>Payment Status</th></tr></thead>' +
+            '<tbody>' +
+              ledger.map((row, idx) =>
+                '<tr>' +
+                  '<td><code>' + row.id + '</code></td><td><b>' + row.customer + '</b></td><td>₦' + row.amount.toLocaleString() + '</td>' +
+                  '<td><select class="sel-st" data-i="' + idx + '" style="padding:3px 6px;font-size:12px;width:auto;">' +
+                    ['Paid','Unpaid','Overdue'].map(s => '<option ' + (s === row.status ? 'selected' : '') + '>' + s + '</option>').join('') +
+                  '</select></td>' +
+                '</tr>'
+              ).join('') +
+            '</tbody>';
+          tableLed.querySelectorAll('.sel-st').forEach(s => s.onchange = () => {
+            ledger[+s.dataset.i].status = s.value;
+            bus.emit('log', { source: 'Ledger Audit', message: ledger[+s.dataset.i].id + ' changed to ' + s.value, level: s.value === 'Paid' ? 'ok' : (s.value === 'Overdue' ? 'wn' : '') });
+          });
+        }
+        renderLed();
+
+        async function completePayment() {
+          if (modalPay) modalPay.close();
+          const customer = document.getElementById('pay-customer').value || 'Chidi Eze';
+          const amount = +document.getElementById('pay-amount').value || 25000;
+          const id = 'INV-' + (105 + ledger.length - 4);
+          if (outPay) outPay.textContent = 'Authorizing Paystack test charge for ₦' + amount.toLocaleString() + '…';
+          try {
+            await engine.run('05-payment-reconciler.json', { customer, amount, invoiceId: id });
+            ledger.push({ id, customer, amount, status: 'Paid' });
+            renderLed();
+            if (outPay) outPay.textContent = '✓ Payment verified (charge.success). Invoice ' + id + '.pdf generated & dispatched to ' + customer + '. Telegram invite sent.';
+          } catch(e) { if (outPay) outPay.textContent = 'Error: ' + e.message; }
+        }
+        if (btnConfirmPay) btnConfirmPay.addEventListener('click', completePayment);
+
+        const btnDebtScan = document.getElementById('btn-run-debt-scan');
+        if (btnDebtScan) btnDebtScan.addEventListener('click', async () => {
+          btnDebtScan.disabled = true; btnDebtScan.textContent = 'Scanning Overdue Ledger…';
+          try { await engine.run('07-debt-reminders.json', { overdue: ledger.filter(r => r.status === 'Overdue') }); }
+          finally { btnDebtScan.disabled = false; btnDebtScan.textContent = 'Run Overdue Debt Scan'; }
+        });
+
+        // Module 4: Chat & Voice
+        const chatBox = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const btnChatSend = document.getElementById('btn-chat-send');
+        const scoreBadge = document.getElementById('chat-lead-score');
+        const statusBadge = document.getElementById('chat-lead-status');
+        let cumScore = 0;
+        async function sendChat(custom) {
+          const txt = custom || chatInput?.value.trim();
+          if (!txt) return;
+          if (chatInput) chatInput.value = '';
+          const u = document.createElement('div'); u.className = 'm u'; u.textContent = txt;
+          chatBox.appendChild(u); chatBox.scrollTop = chatBox.scrollHeight;
+          try {
+            await engine.run('08-faq-chatbot-lead-score.json', { msg: txt });
+            const lower = txt.toLowerCase();
+            let inc = 10, reply = 'I can help with pricing, booking, voice agents, and recruitment automation.';
+            if (/price|cost|₦|fee|how much/i.test(lower)) { reply = 'Retainers start at ₦150k/month. Would you like a tailored automation quote?'; inc = 35; }
+            else if (/book|call|demo|schedule|interview/i.test(lower)) { reply = 'Happy to book you in! Pick a slot on the Recruitment booking calendar.'; inc = 40; }
+            else if (/voice|vapi|agent|phone/i.test(lower)) { reply = 'Our AI voice agents screen candidates 24/7 using Vapi & ElevenLabs.'; inc = 25; }
+            cumScore = Math.min(100, cumScore + inc);
+            if (scoreBadge) scoreBadge.textContent = cumScore;
+            const st = cumScore >= 70 ? 'Qualified' : (cumScore >= 35 ? 'Interested' : 'New');
+            if (statusBadge) { statusBadge.textContent = st; statusBadge.className = 'b ' + (st === 'Qualified' ? 'ok' : (st === 'Interested' ? 'wn' : '')); }
+            await new Promise(r => setTimeout(r, 300));
+            const bot = document.createElement('div'); bot.className = 'm'; bot.textContent = reply;
+            chatBox.appendChild(bot); chatBox.scrollTop = chatBox.scrollHeight;
+          } catch(e){}
+        }
+        if (btnChatSend) btnChatSend.addEventListener('click', () => sendChat());
+        if (chatInput) chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
+
+        const vis = document.getElementById('voice-visualizer');
+        const btnVoice = document.getElementById('btn-start-voice-call');
+        const voiceSt = document.getElementById('voice-call-status');
+        const voiceTr = document.getElementById('voice-call-transcript');
+        let voiceActive = false;
+        async function startVoice() {
+          if (voiceActive) return;
+          voiceActive = true; btnVoice.disabled = true;
+          if (voiceSt) voiceSt.textContent = 'Connecting WebRTC…';
+          if (voiceTr) voiceTr.textContent = '';
+          const p = engine.run('09-voice-screening-postcall.json', {});
+          await new Promise(r => setTimeout(r, 800));
+          if (voiceSt) voiceSt.textContent = 'Agent Speaking';
+          if (vis) vis.classList.add('go');
+          const lines = [
+            'Ada (AI Recruiter): "Hi, this is Ada from Lagos Talent. Do you have two minutes for a quick technical check?"',
+            'Caller (Amaka): "Sure! I applied for the Senior Automation Specialist role."',
+            'Ada (AI Recruiter): "Excellent. What core automation backbones have you shipped in production?"',
+            'Caller (Amaka): "I build primarily in n8n and Make.com, plus Vapi voice agents and Paystack webhook reconcilers."'
+          ];
+          for (const l of lines) {
+            if (voiceTr) { voiceTr.textContent += l + '\n\n'; voiceTr.scrollTop = voiceTr.scrollHeight; }
+            await new Promise(r => setTimeout(r, 1100));
+          }
+          if (vis) vis.classList.remove('go');
+          if (voiceSt) voiceSt.textContent = 'Call Completed';
+          await p;
+          if (voiceTr) {
+            voiceTr.textContent += '─────────────────────────────────────\nAI Post-Call Assessment: Qualified. Sentiment: Highly Positive. Recommendation: Advance to Partner Interview.\n';
+            voiceTr.scrollTop = voiceTr.scrollHeight;
+          }
+          voiceActive = false; btnVoice.disabled = false;
+        }
+        if (btnVoice) btnVoice.addEventListener('click', startVoice);
+
+        const btnOutbound = document.getElementById('btn-request-outbound');
+        const outOutbound = document.getElementById('out-outbound');
+        async function reqOutbound() {
+          const phone = document.getElementById('outbound-phone').value.trim() || '+234 803 000 0000';
+          btnOutbound.disabled = true; btnOutbound.textContent = 'Initiating Call…';
+          if (outOutbound) outOutbound.textContent = 'Dispatching call to ' + phone + ' via Vapi gateway…';
+          try {
+            await engine.run('10-outbound-call.json', { phone });
+            if (outOutbound) outOutbound.textContent = '✓ Call dispatched to ' + phone + '. AI agent is ringing now.';
+          } catch(e) { if (outOutbound) outOutbound.textContent = 'Error: ' + e.message; }
+          finally { btnOutbound.disabled = false; btnOutbound.textContent = 'Call Me Now'; }
+        }
+        if (btnOutbound) btnOutbound.addEventListener('click', reqOutbound);
+
+        // Module 5: Marketing & Content
+        const btnGenContent = document.getElementById('btn-generate-content');
+        const outContent = document.getElementById('out-content-preview');
+        const tableCal = document.getElementById('table-calendar');
+        const calEvents = [];
+        function renderCal() {
+          if (!tableCal) return;
+          if (!calEvents.length) { tableCal.innerHTML = '<tr><td style="color:var(--mut);">No scheduled posts yet. Run Content Studio above to generate posts.</td></tr>'; return; }
+          tableCal.innerHTML = '<thead><tr><th>Scheduled Slot</th><th>Channel</th><th>Topic / Excerpt</th></tr></thead><tbody>' +
+            calEvents.map(e => '<tr><td><code>' + e.time + '</code></td><td><span class="b ok">' + e.platform + '</span></td><td><b>' + e.excerpt + '</b></td></tr>').join('') +
+            '</tbody>';
+        }
+        renderCal();
+        async function genContent() {
+          const topic = document.getElementById('content-topic').value.trim() || 'How AI automation saves SMEs 10 hours a week';
+          const tone = document.getElementById('content-tone').value;
+          btnGenContent.disabled = true; btnGenContent.textContent = 'Generating Copy & Scheduling…';
+          try {
+            await engine.run('11-content-studio.json', { topic, tone });
+            const posts = [
+              { platform: 'LinkedIn', text: '🚀 ' + topic + '\n\nMost business owners spend 40% of their day on repetitive administrative manual labor. A ' + tone + ' approach to operations:\n\n1. Route leads within 5 seconds\n2. Reconcile Paystack payments\n3. Deploy AI voice agents\n\nAutomate the routine. Focus on high-leverage revenue.' },
+              { platform: 'X (Twitter)', text: '1/ ' + topic + ' 🧵\n2/ Eliminate manual lead copying with webhooks.\n3/ Reconcile payments in real-time.\n4/ Reclaim 10+ hours every week.' },
+              { platform: 'Instagram', text: '✨ ' + topic + ' ✨\n\nStop letting administrative bottlenecks stall your growth. Save this post for your quarterly systems audit! 📲 link in bio for free workflow audit.' }
+            ];
+            if (outContent) outContent.textContent = posts.map(p => '[' + p.platform + ']\n' + p.text).join('\n\n─────────────\n\n');
+            posts.forEach(p => calEvents.push({ time: 'Day +' + (calEvents.length + 1) + ' · 09:00 AM', platform: p.platform, excerpt: p.text.slice(0, 42) + '…' }));
+            renderCal();
+          } catch(e) { if (outContent) outContent.textContent = 'Error: ' + e.message; }
+          finally { btnGenContent.disabled = false; btnGenContent.textContent = 'Generate & Schedule Across Channels'; }
+        }
+        if (btnGenContent) btnGenContent.addEventListener('click', genContent);
+
+        const btnGenEmail = document.getElementById('btn-generate-email');
+        const outEmail = document.getElementById('out-email-reply');
+        async function genEmail() {
+          const em = document.getElementById('email-body-input').value.trim();
+          btnGenEmail.disabled = true; btnGenEmail.textContent = 'Drafting & Queuing Drip…';
+          try {
+            await engine.run('12-email-autoresponder-drip.json', { email: em });
+            if (outEmail) outEmail.textContent = 'Subject: Re: Your Automation Inquiry\n\nHello,\n\nThank you for reaching out! Yes, we build production-grade WhatsApp and CRM automations specifically for healthcare and retail SMEs—including instant prescription reminders, inventory alerts, and order confirmations.\n\nOur starter retainers begin at ₦150k/month with end-to-end management. Would you like me to share a 10-minute Loom walkthrough this week?\n\nBest regards,\nLead Automation Architect\n\n[Status: Nurture Drip Step 2 of 5 armed for auto-dispatch in 48 hours]';
+          } catch(e) { if (outEmail) outEmail.textContent = 'Error: ' + e.message; }
+          finally { btnGenEmail.disabled = false; btnGenEmail.textContent = 'Draft AI Reply & Arm Drip'; }
+        }
+        if (btnGenEmail) btnGenEmail.addEventListener('click', genEmail);
+
+        // 11. Run Full Demo Master Sequence
+        const btnRunAll = document.getElementById('btn-run-all-demo');
+        btnRunAll.addEventListener('click', async () => {
+          btnRunAll.disabled = true; btnRunAll.textContent = 'Running Full Sequence…';
+          bus.emit('log', { source: 'Master Demo', message: 'Starting automated 6-module comprehensive demonstration…', level: 'wn' });
+          try {
+            selectTab(0);
+            if (btnInq) await btnInq.click();
+            await processCV('Amaka_Obi_CV.pdf', 184000);
+            const slotBtn = slotsEl?.querySelector('.btn-slot');
+            if (slotBtn) await slotBtn.click();
+
+            selectTab(1);
+            if (btnGenDossier) await btnGenDossier.click();
+
+            selectTab(2);
+            await completePayment();
+            if (btnStockCron) await btnStockCron.click();
+            if (btnDebtScan) await btnDebtScan.click();
+
+            selectTab(3);
+            await sendChat('How much does the automation retainer cost?');
+            await sendChat('Can I schedule a quick demo call?');
+            await reqOutbound();
+
+            selectTab(4);
+            await genContent();
+            await genEmail();
+
+            selectTab(5);
+            bus.emit('log', { source: 'Master Demo', message: 'All modules executed! Total coverage: ' + coverage.fired.size + '/26 automations verified.', level: 'ok' });
+          } finally { btnRunAll.disabled = false; btnRunAll.textContent = '▶ Run full demo'; }
+        });
+
+        // 12. Dynamic JSON Drop & Paste Engine
+        const engDropzone = document.getElementById('engine-dropzone');
+        const engFileInput = document.getElementById('engine-file-input');
+        const engPaste = document.getElementById('engine-paste-json');
+        const btnAddPasted = document.getElementById('btn-add-pasted-card');
+        const engMsg = document.getElementById('engine-msg');
+        const customGrid = document.getElementById('custom-cards-grid');
+
+        function addCustomJson(jsonStr) {
+          let parsed;
+          try { parsed = JSON.parse(jsonStr); }
+          catch(e) { engMsg.textContent = 'Invalid JSON: ' + e.message; engMsg.className = 'er'; return; }
+          const errs = engine.validate(parsed);
+          if (errs.length) { engMsg.textContent = errs.join(' '); engMsg.className = 'er'; return; }
+          const key = 'custom_' + Date.now();
+          engine.register(key, parsed);
+          const card = createCardElement(parsed, engine, { key });
+          customGrid.prepend(card);
+          engMsg.textContent = '✓ Added "' + parsed.name + '" to the interactive cards below!';
+          engMsg.className = 'ok';
+          if (engPaste) engPaste.value = '';
+        }
+        if (btnAddPasted) btnAddPasted.addEventListener('click', () => { if (engPaste?.value.trim()) addCustomJson(engPaste.value.trim()); });
+        if (engDropzone && engFileInput) {
+          engDropzone.addEventListener('click', () => engFileInput.click());
+          engDropzone.addEventListener('dragover', e => { e.preventDefault(); engDropzone.classList.add('h'); });
+          engDropzone.addEventListener('dragleave', () => engDropzone.classList.remove('h'));
+          engDropzone.addEventListener('drop', async e => {
+            e.preventDefault(); engDropzone.classList.remove('h');
+            for (const f of e.dataTransfer.files) addCustomJson(await f.text());
+          });
+          engFileInput.addEventListener('change', async () => {
+            for (const f of engFileInput.files) addCustomJson(await f.text());
+          });
+        }
+        document.getElementById('btn-open-add-modal').addEventListener('click', () => {
+          selectTab(5);
+          engDropzone.scrollIntoView({ behavior: 'smooth' });
+        });
+        document.getElementById('btn-book-audit').addEventListener('click', () => {
+          selectTab(0);
+          document.getElementById('tab-0').scrollIntoView({ behavior: 'smooth' });
+          bus.emit('log', { source: 'Booking Flow', message: 'Directing visitor to Cal.com appointment slot selection.', level: 'ok' });
+        });
       });
-    });
+    })();
   </script>
 </body>
 </html>
