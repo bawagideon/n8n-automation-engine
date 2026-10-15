@@ -1,0 +1,123 @@
+{
+  "name": "Interview booking",
+  "nodes": [
+    {
+      "name": "Cal.com booking created",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "booking",
+        "responseMode": "responseNode"
+      },
+      "notes": "Candidate or corporate client confirms a meeting slot on Cal.com."
+    },
+    {
+      "name": "Create Google Calendar event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [220, 0],
+      "parameters": {
+        "operation": "create",
+        "calendar": "primary",
+        "summary": "AutoOps Technical Interview",
+        "start": "={{$json.body.slot || '2026-10-18T10:00:00Z'}}"
+      },
+      "notes": "Generates a synced Google Meet link and sends calendar invites."
+    },
+    {
+      "name": "Queue 24h SMS reminder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [440, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.ng.termii.com/api/sms/send",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"to\": \"{{$json.body.phone || '2348000000000'}}\",\n  \"from\": \"AutoOps\",\n  \"sms\": \"Reminder: Your interview is tomorrow at {{$json.body.slot}}\",\n  \"type\": \"plain\",\n  \"channel\": \"generic\"\n}"
+      },
+      "notes": "Schedules an automated SMS reminder 24 hours prior to the call."
+    },
+    {
+      "name": "Queue 1h WhatsApp reminder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [660, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v19.0/messages",
+        "sendBody": true,
+        "specifyBody": "json"
+      },
+      "notes": "Prepares a WhatsApp message with meeting link 1 hour prior."
+    },
+    {
+      "name": "Confirm booking on page",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [880, 0],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{JSON.stringify({ status: 'confirmed', slot: $json.body.slot })}}"
+      },
+      "notes": "Confirmation message and reminders schedule render on the site."
+    }
+  ],
+  "connections": {
+    "Cal.com booking created": {
+      "main": [
+        [
+          { "node": "Create Google Calendar event", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Create Google Calendar event": {
+      "main": [
+        [
+          { "node": "Queue 24h SMS reminder", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Queue 24h SMS reminder": {
+      "main": [
+        [
+          { "node": "Queue 1h WhatsApp reminder", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Queue 1h WhatsApp reminder": {
+      "main": [
+        [
+          { "node": "Confirm booking on page", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "meta": {
+    "autoops": {
+      "cat": "Recruitment",
+      "covers": ["book", "rem"],
+      "plain": {
+        "what": "Syncs Cal.com bookings to Google Calendar and queues SMS/WhatsApp reminders.",
+        "when": "A client or candidate reserves an interview slot.",
+        "result": "Zero meeting no-shows with timed WhatsApp and SMS reminders.",
+        "saves": "Eliminates 30 minutes of calendar coordination per meeting"
+      },
+      "sample": {
+        "Cal.com booking created": "booking.created event received for Tue 09:30",
+        "Create Google Calendar event": "Google Calendar event + Google Meet link generated",
+        "Queue 24h SMS reminder": "Termii SMS reminder queued for T-24h",
+        "Queue 1h WhatsApp reminder": "WhatsApp Cloud reminder queued for T-1h",
+        "Confirm booking on page": "Meeting locked. Reminders scheduled."
+      },
+      "live": { "key": "booking", "mode": "respond" },
+      "toolNotes": {
+        "n8n": "Best choice: Cal.com webhook integration is completely free, unlike Calendly which requires paid API tiers.",
+        "make": "Works well with Google Calendar; requires webhook response module for fast front-end ACK.",
+        "zapier": "Calendly webhook triggers require premium Zapier plans."
+      }
+    }
+  }
+}

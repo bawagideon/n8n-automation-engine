@@ -1,0 +1,144 @@
+{
+  "name": "FAQ chatbot and lead scorer",
+  "nodes": [
+    {
+      "name": "Incoming chat message",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat",
+        "responseMode": "responseNode"
+      },
+      "notes": "A website visitor types a query into the live Chatbase/Voiceflow widget."
+    },
+    {
+      "name": "Match intent and query KB",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0],
+      "parameters": {
+        "jsCode": "const text = ($input.first().json.body?.msg || '').toLowerCase();\nlet reply = 'I can help with pricing, booking, voice agents, and recruitment automation.';\nlet scoreInc = 10;\n\nif (/price|cost|₦|fee|rate/.test(text)) {\n  reply = 'Retainers start at ₦150k/month. Would you like a tailored quote?';\n  scoreInc = 35;\n} else if (/book|call|demo|schedule|interview/.test(text)) {\n  reply = 'Happy to book you in! Please choose a convenient slot on our booking calendar.';\n  scoreInc = 40;\n} else if (/voice|vapi|phone|agent/.test(text)) {\n  reply = 'Our AI voice agents handle 24/7 candidate screening and customer intake seamlessly.';\n  scoreInc = 25;\n}\n\nreturn [{ json: { text, reply, scoreInc } }];"
+      },
+      "notes": "Queries the company knowledge base and generates an accurate, immediate answer."
+    },
+    {
+      "name": "Calculate lead score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0],
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst newScore = Math.min(100, (item.scoreInc || 10) + 40);\nconst status = newScore >= 70 ? 'Qualified' : (newScore >= 35 ? 'Interested' : 'New');\nreturn [{ json: { ...item, score: newScore, status } }];"
+      },
+      "notes": "Calculates intent points based on buying signals, budget inquiries, and booking requests."
+    },
+    {
+      "name": "Is lead qualified?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [660, 0],
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$json.score}}",
+              "operation": "largerEqual",
+              "value2": 70
+            }
+          ]
+        }
+      },
+      "notes": "Evaluates whether buyer intent has reached high-priority sales qualification."
+    },
+    {
+      "name": "Update CRM to Qualified",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [880, -60],
+      "parameters": {
+        "operation": "append",
+        "sheetName": "CRM_Leads"
+      },
+      "notes": "Promotes the lead status in CRM and alerts sales reps for high-value follow up."
+    },
+    {
+      "name": "Respond to chat widget",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [880, 60],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{JSON.stringify({ reply: $json.reply, score: $json.score, status: $json.status })}}"
+      },
+      "notes": "Delivers the conversational response back to the user widget in milliseconds."
+    }
+  ],
+  "connections": {
+    "Incoming chat message": {
+      "main": [
+        [
+          { "node": "Match intent and query KB", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Match intent and query KB": {
+      "main": [
+        [
+          { "node": "Calculate lead score", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Calculate lead score": {
+      "main": [
+        [
+          { "node": "Is lead qualified?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Is lead qualified?": {
+      "main": [
+        [
+          { "node": "Update CRM to Qualified", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Respond to chat widget", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Update CRM to Qualified": {
+      "main": [
+        [
+          { "node": "Respond to chat widget", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "meta": {
+    "autoops": {
+      "cat": "Chat & Voice",
+      "covers": ["chat", "qual"],
+      "plain": {
+        "what": "Answers customer queries with knowledge-base AI and scores buying intent in real-time.",
+        "when": "A visitor sends a message through the website chat widget.",
+        "result": "Visitors receive immediate answers and high-intent leads are flagged as Qualified in CRM.",
+        "saves": "Eliminates 80% of repetitive Tier-1 customer support questions"
+      },
+      "take": { "Is lead qualified?": 0 },
+      "sample": {
+        "Incoming chat message": "Visitor inquired: 'How much does your monthly automation retainer cost?'",
+        "Match intent and query KB": "Matched intent: Pricing FAQ → Retrieved retainer tiers",
+        "Calculate lead score": "Lead score increased (+35 points) → Total: 75",
+        "Is lead qualified?": "Score 75 >= 70 → Lead marked 'Qualified'",
+        "Update CRM to Qualified": "CRM contact status upgraded to 'Sales Ready'",
+        "Respond to chat widget": "Delivered price breakdown + booking invitation"
+      },
+      "live": { "key": "chat", "mode": "respond" },
+      "toolNotes": {
+        "n8n": "Best choice: connects directly to Vector stores or LLMs while updating internal CRMs with zero SaaS markups.",
+        "make": "Very clean JSON webhook processing; rate limits can trigger if chat spikes.",
+        "zapier": "Too slow for conversational chat latency requirements."
+      }
+    }
+  }
+}

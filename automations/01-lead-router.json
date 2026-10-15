@@ -1,0 +1,146 @@
+{
+  "name": "Lead router",
+  "nodes": [
+    {
+      "name": "New inquiry arrives",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "inquiry",
+        "responseMode": "responseNode"
+      },
+      "notes": "A company fills in the hiring form on your website."
+    },
+    {
+      "name": "Budget over ₦50k?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [220, 0],
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$json.body.budget}}",
+              "operation": "larger",
+              "value2": 50000
+            }
+          ]
+        }
+      },
+      "notes": "Big budgets go to a senior recruiter. Smaller ones go to a nurture list."
+    },
+    {
+      "name": "Alert senior recruiter",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [440, -80],
+      "parameters": {
+        "channel": "#priority-leads",
+        "text": "=New priority lead: {{$json.body.company}} (₦{{$json.body.budget}})"
+      },
+      "notes": "Your best recruiter gets a Slack notification within seconds."
+    },
+    {
+      "name": "Add to nurture list",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [440, 80],
+      "parameters": {
+        "operation": "append",
+        "sheetName": "Nurture"
+      },
+      "notes": "The lead is saved to a list for gentle follow-up."
+    },
+    {
+      "name": "Send auto-reply",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [660, 0],
+      "parameters": {
+        "sendTo": "={{$json.body.email || 'client@example.com'}}",
+        "subject": "Thanks for reaching out",
+        "message": "We have received your hiring request and will be in touch shortly."
+      },
+      "notes": "The company gets a friendly reply straight away in their inbox."
+    },
+    {
+      "name": "Respond to web page",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [880, 0],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{JSON.stringify({ status: 'ok', priority: $json.body.budget >= 50000 })}}"
+      },
+      "notes": "The website updates immediately confirming the submission."
+    }
+  ],
+  "connections": {
+    "New inquiry arrives": {
+      "main": [
+        [
+          { "node": "Budget over ₦50k?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Budget over ₦50k?": {
+      "main": [
+        [
+          { "node": "Alert senior recruiter", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Add to nurture list", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Alert senior recruiter": {
+      "main": [
+        [
+          { "node": "Send auto-reply", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Add to nurture list": {
+      "main": [
+        [
+          { "node": "Send auto-reply", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Send auto-reply": {
+      "main": [
+        [
+          { "node": "Respond to web page", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "meta": {
+    "autoops": {
+      "cat": "Recruitment",
+      "covers": ["lead", "route", "crm"],
+      "plain": {
+        "what": "Sorts every new hiring request by budget and replies instantly.",
+        "when": "A company submits the inquiry form on your site.",
+        "result": "Hot leads reach a senior recruiter in seconds. Nobody waits for a reply.",
+        "saves": "About 20 minutes per lead"
+      },
+      "take": { "Budget over ₦50k?": 0 },
+      "sample": {
+        "New inquiry arrives": "Received inquiry from Lagos Logistics Ltd (Budget: ₦120,000)",
+        "Budget over ₦50k?": "₦120,000 exceeds ₦50,000 threshold → routed to high-priority lane",
+        "Alert senior recruiter": "Slack alert sent to #priority-leads channel",
+        "Send auto-reply": "Personalized confirmation email dispatched",
+        "Respond to web page": "Portal updated with priority confirmation badge"
+      },
+      "live": { "key": "inquiry", "mode": "respond" },
+      "toolNotes": {
+        "n8n": "Best choice: self-hosted on Railway for ₦0 API costs and zero limits on lead volume.",
+        "make": "Great visual canvas using Routers; costs extra operations as volume scales.",
+        "zapier": "Fastest setup using Paths, but requires expensive multi-step Professional tier."
+      }
+    }
+  }
+}

@@ -1,0 +1,134 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Automation Engine</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+:root{--bg:#eef0f7;--p:#fff;--ink:#12142b;--mut:#646a8c;--ln:#dcdfee;--ac:#4a3cf0;--sg:#ff7a1a;--ok:#0f9d58;--cd:#0c0f24;--ct:#c9d1ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#090b1b;--p:#12152f;--ink:#e9ecff;--mut:#8a90b8;--ln:#242a52;--ac:#8d83ff;--cd:#05070f}}
+:root[data-theme="dark"]{--bg:#090b1b;--p:#12152f;--ink:#e9ecff;--mut:#8a90b8;--ln:#242a52;--ac:#8d83ff;--cd:#05070f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 'Space Grotesk',system-ui,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 16px;background:var(--p);border-bottom:1px solid var(--ln);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+h1{font-size:18px;margin:0;letter-spacing:-.02em}h2{font-size:16px;margin:0}.sp{flex:1}.mut{color:var(--mut)}
+main{max-width:1100px;margin:auto;padding:14px 16px 30px}
+button{font:inherit;cursor:pointer;border:1px solid var(--ln);background:var(--p);color:var(--ink);padding:6px 12px;border-radius:8px}button.pr{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:500}
+button:focus-visible,textarea:focus-visible,abbr:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.c{background:var(--p);border:1px solid var(--ln);border-radius:12px;padding:14px;margin-bottom:14px}
+#grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:14px}#grid .c{margin:0}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}.b{font-size:11px;padding:1px 8px;border:1px solid var(--ln);border-radius:99px;color:var(--mut)}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--ln);margin:10px 0}.tabs button{border:0;border-bottom:2px solid transparent;border-radius:0;background:none;color:var(--mut)}.tabs button[aria-selected=true]{color:var(--ink);border-color:var(--sg);font-weight:700}
+.v{display:none;max-height:420px;overflow:auto;position:relative}.v.on{display:block}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.facts div{background:var(--bg);border-radius:8px;padding:8px 10px;font-size:13px}.facts b{display:block;font-size:12px;color:var(--mut);font-weight:500}
+@media(max-width:520px){.facts{grid-template-columns:1fr}}
+ol.st{list-style:none;margin:0;padding:0}ol.st li{display:flex;gap:10px;padding:8px;border-radius:8px;border:1px solid transparent;transition:.2s}ol.st li.on{border-color:var(--sg);background:#ff7a1a14}ol.st li.done .q{background:var(--ok);color:#fff}ol.st li.skip{opacity:.4}
+.q{flex:0 0 26px;height:26px;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-size:13px}ol.st p{margin:0}ol.st small{display:block;color:var(--ok);min-height:0}
+abbr{text-decoration:underline dotted var(--ac);cursor:help}
+svg text{font:11px 'Space Grotesk'}.nd rect{fill:var(--bg);stroke:var(--ln);stroke-width:1.5;transition:.2s}.nd.on rect{stroke:var(--sg);fill:#ff7a1a22}.nd.done rect{stroke:var(--ok)}.nd.skip{opacity:.35}.nd text{fill:var(--ink)}.ed{fill:none;stroke:var(--ln);stroke-width:2}
+.tool{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center}.blk{margin-bottom:8px;border:1px solid var(--ln);border-radius:8px;overflow:hidden;transition:.2s}.blk.on{border-color:var(--sg);box-shadow:0 0 0 3px #ff7a1a33}.blk.done{border-color:var(--ok)}.blk.skip{opacity:.4}
+.why{padding:6px 10px;font-size:12px;background:var(--bg)}pre{margin:0;padding:8px 10px;background:var(--cd);color:var(--ct);font:12px/1.5 'JetBrains Mono',monospace;overflow:auto}
+pre .k{color:#8ec5ff;font-style:normal}pre .s{color:#b6f0c0;font-style:normal}pre .n{color:#ffb86b;font-style:normal}
+.rc{margin-top:8px;font-size:13px;color:var(--ok);min-height:20px}
+#drop{border:2px dashed var(--ln);border-radius:10px;padding:14px;text-align:center;color:var(--mut)}#drop.h{border-color:var(--sg)}textarea{width:100%;min-height:70px;margin-top:8px;font:12px 'JetBrains Mono',monospace;background:var(--bg);color:var(--ink);border:1px solid var(--ln);border-radius:8px;padding:8px}
+#msg{margin-top:6px;font-size:13px}.er{color:#d6333a}dialog{border:1px solid var(--ln);border-radius:12px;background:var(--p);color:var(--ink);max-width:560px;width:92%}dialog::backdrop{background:#0008}
+</style></head><body>
+<header><h1>Automation Engine</h1><span class="mut">One n8n JSON file in, one explained card out.</span><span class="sp"></span><button onclick="br.showModal()">Agent build brief</button><button onclick="th()">Theme</button></header>
+<main>
+<div class="c"><h2>Add an automation</h2><p class="mut" style="margin:2px 0 8px">Drop an n8n workflow JSON that includes a <code>meta.autoops</code> block, or paste it below. It becomes a card instantly.</p>
+<div id="drop" role="button" tabindex="0">Drop .json files here or click to choose<input id="fi" type="file" accept=".json" multiple hidden></div>
+<textarea id="pt" placeholder="Or paste JSON here"></textarea><div class="top" style="margin-top:6px"><button class="pr" onclick="paste()">Add card</button><span id="msg"></span></div></div>
+<div id="grid"></div></main>
+
+<dialog id="br"><h2>Build brief for your agent</h2><pre id="bt" style="white-space:pre-wrap;margin:10px 0;border-radius:8px"></pre><div class="top"><button class="pr" onclick="cp($('#bt').textContent,this)">Copy brief</button><button onclick="br.close()">Close</button></div></dialog>
+
+<script type="application/json" class="auto">{"name":"Lead router","nodes":[
+{"name":"New inquiry arrives","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"parameters":{"httpMethod":"POST","path":"inquiry"},"notes":"A company fills in the hiring form on your website."},
+{"name":"Budget over ₦50k?","type":"n8n-nodes-base.if","typeVersion":2,"position":[220,0],"parameters":{"conditions":{"number":[{"value1":"={{$json.body.budget}}","operation":"larger","value2":50000}]}},"notes":"Big budgets go to a senior recruiter. Smaller ones go to a nurture list."},
+{"name":"Alert senior recruiter","type":"n8n-nodes-base.slack","typeVersion":2,"position":[440,-80],"parameters":{"channel":"#priority-leads","text":"=New lead: {{$json.body.company}}"},"notes":"Your best recruiter gets a Slack message within seconds."},
+{"name":"Add to nurture list","type":"n8n-nodes-base.googleSheets","typeVersion":4,"position":[440,80],"parameters":{"operation":"append","sheetName":"Nurture"},"notes":"The lead is saved to a list for gentle follow-up."},
+{"name":"Send auto-reply","type":"n8n-nodes-base.gmail","typeVersion":2,"position":[660,0],"parameters":{"sendTo":"={{$json.body.email}}","subject":"Thanks for reaching out"},"notes":"The company gets a friendly reply straight away."}],
+"connections":{"New inquiry arrives":{"main":[[{"node":"Budget over ₦50k?","type":"main","index":0}]]},"Budget over ₦50k?":{"main":[[{"node":"Alert senior recruiter","type":"main","index":0}],[{"node":"Add to nurture list","type":"main","index":0}]]},"Alert senior recruiter":{"main":[[{"node":"Send auto-reply","type":"main","index":0}]]},"Add to nurture list":{"main":[[{"node":"Send auto-reply","type":"main","index":0}]]}},
+"meta":{"autoops":{"cat":"Recruitment","plain":{"what":"Sorts every new hiring request by budget and replies instantly.","when":"A company submits the inquiry form.","result":"Hot leads reach a human in seconds. Nobody waits for a reply.","saves":"About 20 minutes per lead"},"take":{"Budget over ₦50k?":0},"sample":{"New inquiry arrives":"Received: Lagos Logistics, budget ₦120,000","Budget over ₦50k?":"₦120,000 is over ₦50,000, so this is a priority lead","Alert senior recruiter":"Slack message posted in #priority-leads","Send auto-reply":"Email sent to hr@lagoslogistics.ng"}}}}</script>
+
+<script type="application/json" class="auto">{"name":"CV scorer","nodes":[
+{"name":"CV uploaded","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"parameters":{"httpMethod":"POST","path":"cv","responseMode":"responseNode"},"notes":"A candidate drops their CV on your site."},
+{"name":"Gemini reads the CV","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[220,0],"parameters":{"method":"POST","url":"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent","sendBody":true,"specifyBody":"json"},"notes":"AI reads the whole PDF and scores it against the job."},
+{"name":"Log candidate","type":"n8n-nodes-base.googleSheets","typeVersion":4,"position":[440,0],"parameters":{"operation":"append","sheetName":"Candidates"},"notes":"Name, skills and score are saved to your tracking sheet."},
+{"name":"Show score on site","type":"n8n-nodes-base.respondToWebhook","typeVersion":1,"position":[660,0],"parameters":{"respondWith":"json"},"notes":"The score appears on the page right away."}],
+"connections":{"CV uploaded":{"main":[[{"node":"Gemini reads the CV","type":"main","index":0}]]},"Gemini reads the CV":{"main":[[{"node":"Log candidate","type":"main","index":0}]]},"Log candidate":{"main":[[{"node":"Show score on site","type":"main","index":0}]]}},
+"meta":{"autoops":{"cat":"Recruitment","plain":{"what":"Reads a CV and gives the candidate a match score.","when":"Someone uploads a CV.","result":"A score out of 100, their top skills, and a new row in your tracker.","saves":"About 10 minutes per CV"},"sample":{"CV uploaded":"Amaka_Obi_CV.pdf received (184 KB)","Gemini reads the CV":"Match score 88. Skills: n8n, Make.com, Vapi","Log candidate":"Row 42 added to Candidates","Show score on site":"Score 88 sent back to the page"}}}}</script>
+
+<script type="application/json" class="auto">{"name":"Payment reconciler","nodes":[
+{"name":"Paystack payment succeeds","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[0,0],"parameters":{"httpMethod":"POST","path":"paystack"},"notes":"A customer pays and Paystack tells us."},
+{"name":"Mark invoice paid","type":"n8n-nodes-base.googleSheets","typeVersion":4,"position":[220,0],"parameters":{"operation":"update","sheetName":"Ledger"},"notes":"The matching invoice in your ledger turns to Paid."},
+{"name":"Email invoice","type":"n8n-nodes-base.gmail","typeVersion":2,"position":[440,0],"parameters":{"sendTo":"={{$json.body.data.customer.email}}","subject":"Your receipt"},"notes":"The customer gets a PDF receipt by email."},
+{"name":"Send onboarding invite","type":"n8n-nodes-base.telegram","typeVersion":1,"position":[660,0],"parameters":{"text":"Welcome! Join here"},"notes":"They get an invite to your customer group."}],
+"connections":{"Paystack payment succeeds":{"main":[[{"node":"Mark invoice paid","type":"main","index":0}]]},"Mark invoice paid":{"main":[[{"node":"Email invoice","type":"main","index":0}]]},"Email invoice":{"main":[[{"node":"Send onboarding invite","type":"main","index":0}]]}},
+"meta":{"autoops":{"cat":"Finance","plain":{"what":"Records every payment, sends a receipt and welcomes the customer.","when":"A Paystack payment goes through.","result":"Books stay accurate and customers feel looked after.","saves":"About 15 minutes per sale"},"sample":{"Paystack payment succeeds":"₦25,000 from Chidi Eze confirmed","Mark invoice paid":"INV-105 marked Paid","Email invoice":"Receipt emailed","Send onboarding invite":"Telegram invite sent"}}}}</script>
+
+<script type="application/json" class="auto">{"name":"Low-stock alert","nodes":[
+{"name":"Every day at 8am","type":"n8n-nodes-base.scheduleTrigger","typeVersion":1,"position":[0,0],"parameters":{"rule":{"interval":[{"triggerAtHour":8}]}},"notes":"A timer starts the check each morning."},
+{"name":"Read stock sheet","type":"n8n-nodes-base.googleSheets","typeVersion":4,"position":[220,0],"parameters":{"operation":"getAll","sheetName":"Stock"},"notes":"Pulls the latest quantity for every product."},
+{"name":"Anything below 10?","type":"n8n-nodes-base.if","typeVersion":2,"position":[440,0],"parameters":{"conditions":{"number":[{"value1":"={{$json.qty}}","operation":"smaller","value2":10}]}},"notes":"Checks if any item is running low."},
+{"name":"Text the manager","type":"n8n-nodes-base.httpRequest","typeVersion":4,"position":[660,-60],"parameters":{"method":"POST","url":"https://api.ng.termii.com/api/sms/send"},"notes":"The manager gets an SMS listing what to reorder."},
+{"name":"Do nothing","type":"n8n-nodes-base.noOp","typeVersion":1,"position":[660,60],"parameters":{},"notes":"All stocked up. No message needed."}],
+"connections":{"Every day at 8am":{"main":[[{"node":"Read stock sheet","type":"main","index":0}]]},"Read stock sheet":{"main":[[{"node":"Anything below 10?","type":"main","index":0}]]},"Anything below 10?":{"main":[[{"node":"Text the manager","type":"main","index":0}],[{"node":"Do nothing","type":"main","index":0}]]}},
+"meta":{"autoops":{"cat":"Operations","plain":{"what":"Checks your stock every morning and warns you before you run out.","when":"Every day at 8am, no clicking needed.","result":"An SMS naming exactly which items to reorder.","saves":"A daily stock check"},"take":{"Anything below 10?":0},"sample":{"Every day at 8am":"Timer fired at 08:00","Read stock sheet":"4 products read","Anything below 10?":"SIM packs has 8 left, which is under 10","Text the manager":"SMS sent: reorder SIM packs"}}}}</script>
+
+<script>
+const $=(s,e=document)=>e.querySelector(s),$$=(s,e=document)=>[...e.querySelectorAll(s)],w=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const GL={webhook:'A web address that wakes the automation up when something is sent to it',API:'A way for two apps to talk to each other',CRM:'The app where you keep customer records',trigger:'The event that starts an automation',JSON:'A plain-text format apps use to share data',nurture:'Staying in touch gently until a lead is ready'};
+const gl=s=>esc(s).replace(new RegExp('\\b('+Object.keys(GL).join('|')+')\\b','gi'),m=>`<abbr tabindex="0" title="${GL[Object.keys(GL).find(k=>k.toLowerCase()==m.toLowerCase())]}">${m}</abbr>`);
+const KIND={webhook:'⚡',scheduleTrigger:'⏰',if:'🔀',httpRequest:'🌐',googleSheets:'📊',gmail:'✉️',slack:'💬',telegram:'💬',respondToWebhook:'↩️',noOp:'⏸️'};
+const ico=t=>KIND[t.split('.').pop()]||'⚙️';
+const hl=o=>esc(JSON.stringify(o,null,1)).replace(/(&quot;(?:(?!&quot;).)*&quot;)(:)?|\b(true|false|null)\b|-?\b\d+\.?\d*\b/g,(m,s,c)=>s?(c?`<i class="k">${s}</i>:`:`<i class="s">${s}</i>`):`<i class="n">${m}</i>`);
+const exp=a=>{const c=JSON.parse(JSON.stringify(a));delete c.meta.autoops;if(!Object.keys(c.meta).length)delete c.meta;return c};
+function th(){const r=document.documentElement,d=matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=(r.dataset.theme||(d?'dark':'light'))==='dark'?'light':'dark'}
+function cp(t,b){const o=b.textContent,d=()=>{b.textContent='Copied';setTimeout(()=>b.textContent=o,1200)};try{navigator.clipboard.writeText(t).then(d,fb)}catch(e){fb()}function fb(){const x=document.createElement('textarea');x.value=t;document.body.append(x);x.select();try{document.execCommand('copy')}catch(e){}x.remove();d()}}
+function dl(a,b){try{const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify(exp(a),null,2)],{type:'application/json'}));l.download=a.name.replace(/\W+/g,'-').toLowerCase()+'.json';l.click()}catch(e){}cp(JSON.stringify(exp(a),null,2),b)}
+function check(a){const e=[];if(!a||!Array.isArray(a.nodes)||!a.nodes.length)e.push('The file has no "nodes" list. Export the workflow from n8n (Download) and try again.');
+if(!a||typeof a.connections!=='object')e.push('The file has no "connections" section.');
+const p=a?.meta?.autoops?.plain;if(!p||!p.what||!p.when||!p.result)e.push('Add meta.autoops.plain with "what", "when" and "result" so non-technical readers get an explanation.');
+(a?.nodes||[]).forEach((n,i)=>{if(!n.name||!n.type)e.push('Node '+(i+1)+' needs a name and a type.');else if(!n.notes)e.push('Node "'+n.name+'" needs a "notes" line in plain English.')});return e}
+function plan(a){const N=Object.fromEntries(a.nodes.map(n=>[n.name,n])),inc=new Set(a.nodes.flatMap(n=>Object.values(a.connections[n.name]||{}).flat(2).map(c=>c.node))),take=a.meta.autoops.take||{},seq=[],q=[(a.nodes.find(n=>!inc.has(n.name))||a.nodes[0]).name];
+while(q.length){const m=q.shift();if(seq.includes(m)||!N[m])continue;seq.push(m);const o=a.connections[m]?.main||[];(N[m].type.endsWith('.if')?[o[take[m]??0]||[]]:o).forEach(l=>l.forEach(c=>q.push(c.node)))}
+return{seq,skip:a.nodes.map(n=>n.name).filter(n=>!seq.includes(n))}}
+function flow(a){const d={},cnt={},P={};a.nodes.forEach(n=>d[n.name]=0);for(let i=0;i<9;i++)a.nodes.forEach(n=>Object.values(a.connections[n.name]||{}).flat(2).forEach(c=>d[c.node]=Math.max(d[c.node]||0,d[n.name]+1)));
+a.nodes.forEach(n=>{const k=d[n.name];cnt[k]=cnt[k]||0;P[n.name]=[12+k*165,12+cnt[k]++*62]});
+const W=Math.max(...Object.values(P).map(p=>p[0]))+150,Hh=Math.max(...Object.values(P).map(p=>p[1]))+60;
+const E=a.nodes.flatMap(n=>Object.values(a.connections[n.name]||{}).flat(2).map(c=>{const[x,y]=P[n.name],[X,Y]=P[c.node];return`<path class="ed" d="M${x+140},${y+24}C${x+155},${y+24} ${X-15},${Y+24} ${X},${Y+24}"/>`})).join('');
+return`<svg viewBox="0 0 ${W} ${Hh}" width="${W}" role="img" aria-label="Flow diagram">${E}${a.nodes.map(n=>`<g class="nd" data-n="${esc(n.name)}"><rect x="${P[n.name][0]}" y="${P[n.name][1]}" width="140" height="48" rx="9"/><text x="${P[n.name][0]+10}" y="${P[n.name][1]+20}">${ico(n.type)} ${esc(n.name.length>19?n.name.slice(0,18)+'…':n.name)}</text><text x="${P[n.name][0]+10}" y="${P[n.name][1]+37}" fill="var(--mut)" style="fill:var(--mut)">${esc(n.type.split('.').pop())}</text></g>`).join('')}</svg>`}
+const C=[];
+function add(a,front){const e=check(a);if(e.length)return e;const i=C.length,p=a.meta.autoops.plain,pl=plan(a);C.push({a,pl});const el=document.createElement('article');el.className='c';el.id='c'+i;
+el.innerHTML=`<div class="top"><h2>${esc(a.name)}</h2><span class="b">${esc(a.meta.autoops.cat||'General')}</span><span class="b">${a.nodes.length} steps</span><span class="sp"></span><button class="pr" data-run>▶ Run live</button></div>
+<div class="tabs" role="tablist">${['Story','Flow','n8n blueprint'].map((t,j)=>`<button role="tab" aria-selected="${!j}" data-t="${j}">${t}</button>`).join('')}</div>
+<div class="v on"><div class="facts"><div><b>What it does</b>${gl(p.what)}</div><div><b>Starts when</b>${gl(p.when)}</div><div><b>You get</b>${gl(p.result)}</div><div><b>Time saved</b>${esc(p.saves||'Hours each week')}</div></div>
+<ol class="st">${a.nodes.map((n,j)=>`<li data-n="${esc(n.name)}"><span class="q">${j+1}</span><div><p><b>${esc(n.name)}.</b> ${gl(n.notes)}</p><small></small></div></li>`).join('')}</ol></div>
+<div class="v">${flow(a)}<p class="mut" style="font-size:12px">Orange glows on the step running now. Faded steps were skipped by the decision.</p></div>
+<div class="v"><div class="tool"><button onclick="cp(JSON.stringify(exp(C[${i}].a),null,2),this)">Copy for n8n</button><button onclick="dl(C[${i}].a,this)">Download .json</button><span class="mut" style="font-size:12px">In n8n: Workflows → Import from file, or paste with Ctrl+V on the canvas.</span></div>
+${a.nodes.map(n=>`<div class="blk" data-n="${esc(n.name)}"><div class="why">In plain English: ${gl(n.notes)}</div><pre>${hl(n)}</pre></div>`).join('')}<div class="blk"><div class="why">How the steps connect</div><pre>${hl(a.connections)}</pre></div></div>
+<div class="rc" aria-live="polite"></div>`;
+$('#grid')[front?'prepend':'append'](el);
+$$('[data-t]',el).forEach(b=>b.onclick=()=>{$$('[data-t]',el).forEach(x=>x.setAttribute('aria-selected',x==b));$$('.v',el).forEach((v,j)=>v.classList.toggle('on',j==b.dataset.t))});
+$('[data-run]',el).onclick=()=>run(i);return[]}
+const mark=(el,n,c)=>$$('[data-n]',el).filter(x=>x.dataset.n===n).forEach(x=>{x.classList.remove('on','done','skip');c&&x.classList.add(c);if(c=='on'){const v=x.closest('.v');if(v&&v.classList.contains('on'))v.scrollTop=x.offsetTop-v.offsetTop-8}});
+async function run(i){const el=$('#c'+i),{a,pl}=C[i];if(el.busy)return;el.busy=1;const sm=a.meta.autoops.sample||{},rc=$('.rc',el),t0=Date.now();rc.textContent='';
+$$('li small',el).forEach(s=>s.textContent='');a.nodes.forEach(n=>mark(el,n.name,pl.skip.includes(n.name)?'skip':''));
+for(const n of pl.seq){mark(el,n,'on');await w(850);mark(el,n,'done');const li=$$('li',el).find(x=>x.dataset.n===n);li.querySelector('small').textContent='✓ '+(sm[n]||'Done');rc.textContent='✓ '+(sm[n]||'Done')}
+pl.skip.forEach(n=>{const li=$$('li',el).find(x=>x.dataset.n===n);li.querySelector('small').textContent='Skipped. Not needed this time.'});
+rc.textContent='✓ Finished in '+((Date.now()-t0)/1000).toFixed(1)+'s. '+(sm[pl.seq[pl.seq.length-1]]||'');el.busy=0}
+function load(t,front){let j;try{j=JSON.parse(t)}catch(e){return['That is not valid JSON: '+e.message]}return add(j,front)}
+function show(e,n){$('#msg').className=e.length?'er':'';$('#msg').textContent=e.length?e.join(' '):'Added '+n+'. It is the first card below.'}
+function paste(){const e=load($('#pt').value,true);show(e,'the card');if(!e.length)$('#pt').value=''}
+const dz=$('#drop'),fi=$('#fi');dz.onclick=()=>fi.click();dz.onkeydown=e=>e.key=='Enter'&&fi.click();dz.ondragover=e=>{e.preventDefault();dz.classList.add('h')};dz.ondragleave=()=>dz.classList.remove('h');
+async function files(fs){const E=[];for(const f of fs)E.push(...load(await f.text(),true).map(x=>f.name+': '+x));show(E,fs.length+' file(s)')}
+dz.ondrop=e=>{e.preventDefault();dz.classList.remove('h');files(e.dataTransfer.files)};fi.onchange=()=>files(fi.files);
+$$('script.auto').forEach(s=>add(JSON.parse(s.textContent)));
+$('#bt').textContent=`GOAL: JSON-driven automation cards. One n8n export per automation, three audiences, one source of truth.
+
+1. FILES: /automations/*.json (one valid n8n workflow each) + /automations/index.json (list of filenames). Engine fetches the index, then each file. Fall back to embedded <script type="application/json" class="auto"> blocks.
+2. SCHEMA: standard n8n export (name, nodes, connections) plus meta.autoops = { cat, plain:{what,when,result,saves}, take:{"<IF node name>":0|1}, sample:{"<node name>":"what happened, in one sentence"} }.
+3. RULES: every node has "notes" in plain English (max 18 words, no jargon). Node names read like actions ("Email invoice"). Validate on import and show human error messages.
+4. VIEWS: Story (non-technical: facts + numbered steps + glossary tooltips), Flow (auto-laid-out SVG), n8n blueprint (per-node highlighted JSON with plain-English line above, copy/download with meta.autoops stripped so n8n imports cleanly).
+5. LIVE RUN: replay sample data by walking connections from the trigger. IF nodes follow meta.autoops.take; the other branch is shown as skipped. All three views highlight the active node together.
+6. REAL MODE (next): when a base URL is set, POST to the trigger's webhook path, then map results by node name from the n8n execution API (GET /api/v1/executions/{id}?includeData=true) and stream them into the same cards.
+7. QA: keyboard-operable tabs, 375px layout, light and dark themes, reduced motion, import every sample file into real n8n.`;
+</script></body></html>

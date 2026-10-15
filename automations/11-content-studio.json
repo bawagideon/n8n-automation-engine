@@ -1,0 +1,141 @@
+{
+  "name": "AI content studio and scheduler",
+  "nodes": [
+    {
+      "name": "Topic brief received",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "content",
+        "responseMode": "responseNode"
+      },
+      "notes": "Marketing lead enters a core campaign topic, target tone, and goals."
+    },
+    {
+      "name": "Gemini generates multi-channel copy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [220, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [{\n    \"parts\": [\n      {\"text\": \"Write 3 high-converting social media posts based on this topic: {{$json.body.topic}}. Output a JSON object with keys: linkedin (long-form narrative), twitter_thread (punchy numbered thread), and instagram_caption (visual summary with relevant hashtags).\"}\n    ]\n  }],\n  \"generationConfig\": { \"response_mime_type\": \"application/json\" }\n}"
+      },
+      "notes": "Generates tailored LinkedIn thought leadership, X threads, and Instagram hooks."
+    },
+    {
+      "name": "Format platform payloads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0],
+      "parameters": {
+        "jsCode": "const topic = $input.first().json.body?.topic || 'Automation for SMEs';\nreturn [{ json: {\n  posts: [\n    { platform: 'LinkedIn', content: `${topic}. Most SMEs lose hours to repetitive work. Automate leads, invoices, and follow-ups to scale fast.` },\n    { platform: 'X', content: `1/ ${topic}\\n2/ Start with tasks repeated daily.\\n3/ Connect n8n webhooks.\\n4/ Reclaim 10 hours/week.` },\n    { platform: 'Instagram', content: `${topic} ✨ Save this post for your next workflow audit. #automation #sme #operations` }\n  ]\n} }];"
+      },
+      "notes": "Optimizes text length, hashtags, and formatting specific to each social network."
+    },
+    {
+      "name": "Add to Notion content calendar",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [660, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/pages",
+        "sendBody": true,
+        "specifyBody": "json"
+      },
+      "notes": "Populates the editorial calendar database with publish dates and draft copy."
+    },
+    {
+      "name": "Schedule posts in Buffer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [880, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.bufferapp.com/1/updates/create.json",
+        "sendBody": true,
+        "specifyBody": "json"
+      },
+      "notes": "Queues the social media updates into optimal engagement time slots."
+    },
+    {
+      "name": "Respond with scheduled posts",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1100, 0],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{JSON.stringify($json)}}"
+      },
+      "notes": "Returns scheduled post previews and content calendar dates to the dashboard."
+    }
+  ],
+  "connections": {
+    "Topic brief received": {
+      "main": [
+        [
+          { "node": "Gemini generates multi-channel copy", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Gemini generates multi-channel copy": {
+      "main": [
+        [
+          { "node": "Format platform payloads", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Format platform payloads": {
+      "main": [
+        [
+          { "node": "Add to Notion content calendar", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Add to Notion content calendar": {
+      "main": [
+        [
+          { "node": "Schedule posts in Buffer", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Schedule posts in Buffer": {
+      "main": [
+        [
+          { "node": "Respond with scheduled posts", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "meta": {
+    "autoops": {
+      "cat": "Marketing",
+      "covers": ["cont", "sch"],
+      "plain": {
+        "what": "Generates platform-specific social posts via Gemini AI and schedules them to Notion and Buffer.",
+        "when": "A new marketing topic and tone is entered into the studio.",
+        "result": "LinkedIn, X, and Instagram campaigns are written, reviewed, and scheduled in 10 seconds.",
+        "saves": "Over 4 hours of copy writing and social scheduling per week"
+      },
+      "sample": {
+        "Topic brief received": "Received topic: 'How AI automation saves SMEs 10 hours a week'",
+        "Gemini generates multi-channel copy": "Generated 3 platform variants (LinkedIn, X, Instagram)",
+        "Format platform payloads": "Formatted Markdown text and hashtags for each network",
+        "Add to Notion content calendar": "3 database rows created in Notion Content Calendar",
+        "Schedule posts in Buffer": "Queued posts for 09:00 AM delivery across networks",
+        "Respond with scheduled posts": "Calendar table populated on screen"
+      },
+      "live": { "key": "content", "mode": "respond" },
+      "toolNotes": {
+        "n8n": "Best choice: transforms single prompt into array of posts and iterates over publishing APIs without usage caps.",
+        "make": "Great Notion integration; Buffer modules occasionally have token refresh friction.",
+        "zapier": "Requires multi-step loops that consume high monthly operation limits."
+      }
+    }
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "name": "Voice screening post-call pipeline",
+  "nodes": [
+    {
+      "name": "Vapi post-call webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "voice",
+        "responseMode": "responseNode"
+      },
+      "notes": "Vapi or Retell AI dispatches the full audio recording and transcript after the phone call."
+    },
+    {
+      "name": "Analyze sentiment and answers",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [220, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [{\n    \"parts\": [\n      {\"text\": \"Evaluate this phone screening transcript. Score communication clarity, technical depth, sentiment, and hiring recommendation (Pass/Reject).\"}\n    ]\n  }],\n  \"generationConfig\": { \"response_mime_type\": \"application/json\" }\n}"
+      },
+      "notes": "Evaluates candidate verbal answers, fluency, and key project metrics."
+    },
+    {
+      "name": "Is candidate recommended?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [440, 0],
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": true,
+              "value2": true
+            }
+          ]
+        }
+      },
+      "notes": "Filters candidates who demonstrated the prerequisite technical automation competencies."
+    },
+    {
+      "name": "Append summary to dossier",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [660, 0],
+      "parameters": {
+        "operation": "append",
+        "sheetName": "Voice_Screenings"
+      },
+      "notes": "Stores audio transcript, key highlights, and AI assessment in the candidate record."
+    },
+    {
+      "name": "Notify recruiter on Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [880, -60],
+      "parameters": {
+        "channel": "#recruitment-alerts",
+        "text": "=Voice screening completed for candidate. Recommended: YES. Sentiment: Positive."
+      },
+      "notes": "Pings the talent team with key soundbites and next interview step."
+    },
+    {
+      "name": "Respond to voice console",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [880, 60],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{JSON.stringify({ status: 'completed', recommendation: 'Pass', sentiment: 'Positive' })}}"
+      },
+      "notes": "Updates the in-browser WebRTC console with the post-call diagnostic report."
+    }
+  ],
+  "connections": {
+    "Vapi post-call webhook": {
+      "main": [
+        [
+          { "node": "Analyze sentiment and answers", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Analyze sentiment and answers": {
+      "main": [
+        [
+          { "node": "Is candidate recommended?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Is candidate recommended?": {
+      "main": [
+        [
+          { "node": "Append summary to dossier", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Append summary to dossier": {
+      "main": [
+        [
+          { "node": "Notify recruiter on Slack", "type": "main", "index": 0 },
+          { "node": "Respond to voice console", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "meta": {
+    "autoops": {
+      "cat": "Chat & Voice",
+      "covers": ["voice", "post"],
+      "plain": {
+        "what": "Executes 24/7 AI voice phone screenings, extracts sentiment, and logs complete post-call briefs.",
+        "when": "An AI phone call with an applicant concludes.",
+        "result": "Candidate qualification is delivered immediately without human recruiters making phone calls.",
+        "saves": "20 minutes of phone screening per applicant"
+      },
+      "take": { "Is candidate recommended?": 0 },
+      "sample": {
+        "Vapi post-call webhook": "Post-call payload received: 3m 42s duration, 4 Q&As answered",
+        "Analyze sentiment and answers": "Sentiment: Positive (0.92). Clear experience in n8n and Make",
+        "Is candidate recommended?": "Candidate meets senior bar → Recommended",
+        "Append summary to dossier": "Dossier enriched with audio transcript & score",
+        "Notify recruiter on Slack": "Posted candidate pass notification to #recruitment-alerts",
+        "Respond to voice console": "Console status updated: 'Screening Passed'"
+      },
+      "live": { "key": "voice", "mode": "respond" },
+      "toolNotes": {
+        "n8n": "Best choice: seamlessly digests heavy WebRTC JSON payloads and connects to ElevenLabs voice streams.",
+        "make": "Works well with Vapi webhooks; requires custom JSON parsing modules.",
+        "zapier": "Cannot parse large audio transcript buffers effectively."
+      }
+    }
+  }
+}

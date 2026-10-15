@@ -1,0 +1,190 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>AutoOps Command Center</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+:root{--bg:#eef0f7;--p:#fff;--ink:#12142b;--mut:#646a8c;--ln:#dcdfee;--ac:#4a3cf0;--sg:#ff7a1a;--ok:#0f9d58;--wn:#d97a00;--er:#d6333a;--lg:#0c0f24;--lt:#c9d1ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#090b1b;--p:#12152f;--ink:#e9ecff;--mut:#8a90b8;--ln:#242a52;--ac:#8d83ff;--lg:#05070f}}
+:root[data-theme="dark"]{--bg:#090b1b;--p:#12152f;--ink:#e9ecff;--mut:#8a90b8;--ln:#242a52;--ac:#8d83ff;--lg:#05070f}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 'Space Grotesk',system-ui,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 16px;background:var(--p);border-bottom:1px solid var(--ln);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+h1{font-size:18px;margin:0;font-weight:700;letter-spacing:-.02em}h2{font-size:15px;margin:0 0 10px}h3{font-size:13px;margin:12px 0 6px;color:var(--mut);font-weight:500}
+.sp{flex:1}.dot{width:10px;height:10px;border-radius:50%;background:var(--ok);display:inline-block;margin-right:6px}.dot.err{background:var(--er)}
+.cov{display:flex;align-items:center;gap:8px;font-size:13px}.bar{width:120px;height:6px;background:var(--ln);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--ac);transition:width .4s}
+button,.btn{font:inherit;cursor:pointer;border:1px solid var(--ln);background:var(--p);color:var(--ink);padding:7px 12px;border-radius:8px}
+button.pr{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:500}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+input,select,textarea{font:inherit;width:100%;padding:8px 10px;border:1px solid var(--ln);border-radius:8px;background:var(--bg);color:var(--ink)}
+textarea{min-height:110px;resize:vertical}label{display:block;font-size:12px;color:var(--mut);margin:8px 0 3px}
+nav{display:flex;gap:4px;overflow-x:auto;padding:10px 16px 0;max-width:1280px;margin:auto}nav button{border:0;border-bottom:2px solid transparent;border-radius:0;background:none;color:var(--mut);white-space:nowrap}nav button.on{color:var(--ink);border-color:var(--sg);font-weight:700}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;max-width:1280px;margin:auto;padding:12px 16px 24px}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+#pipe{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--p);border:1px solid var(--ln);border-radius:10px;padding:10px 12px;margin-bottom:12px;min-height:46px;color:var(--mut)}
+.node{padding:3px 10px;border-radius:99px;border:1px solid var(--ln);font-size:12px;transition:.25s}.node.on{border-color:var(--sg);color:var(--sg);box-shadow:0 0 0 3px #ff7a1a33}.node.done{background:var(--ac);border-color:var(--ac);color:#fff}
+.pn{display:none}.pn.on{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));align-items:start}
+.c{background:var(--p);border:1px solid var(--ln);border-radius:12px;padding:14px}.c .tag{font-size:12px;color:var(--mut);margin-bottom:8px}
+.out{margin-top:10px;padding:10px;border-left:3px solid var(--ac);background:var(--bg);border-radius:0 8px 8px 0;font-size:13px;white-space:pre-wrap}
+.out:empty{display:none}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1}.row>button{flex:0 0 auto}
+#drop{border:2px dashed var(--ln);border-radius:12px;padding:22px;text-align:center;color:var(--mut);cursor:pointer}#drop.h{border-color:var(--sg);background:#ff7a1a14}
+.ring{width:84px;height:84px;flex:0 0 84px}.ring text{font:700 22px 'Space Grotesk';fill:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px 4px;border-bottom:1px solid var(--ln);text-align:left}th{color:var(--mut);font-weight:500}
+.b{padding:1px 8px;border-radius:99px;font-size:11px;background:var(--bg);border:1px solid var(--ln)}.b.er{color:var(--er);border-color:var(--er)}.b.ok{color:var(--ok);border-color:var(--ok)}.b.wn{color:var(--wn);border-color:var(--wn)}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.slots button.on{background:var(--ac);color:#fff}
+#chat{height:190px;overflow:auto;background:var(--bg);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px}.m{max-width:85%;padding:6px 10px;border-radius:10px;background:var(--p);border:1px solid var(--ln)}.m.u{align-self:flex-end;background:var(--ac);color:#fff;border-color:var(--ac)}
+.vis{display:flex;gap:3px;align-items:center;height:40px;justify-content:center}.vis i{width:5px;height:6px;background:var(--sg);border-radius:3px}.vis.go i{animation:w .6s infinite ease-in-out alternate}.vis.go i:nth-child(2n){animation-delay:.15s}.vis.go i:nth-child(3n){animation-delay:.3s}
+@keyframes w{to{height:36px}}@media(prefers-reduced-motion:reduce){.vis.go i{animation:none;height:20px}}
+aside{position:sticky;top:70px;align-self:start;background:var(--lg);color:var(--lt);border-radius:12px;display:flex;flex-direction:column;height:calc(100vh - 100px);min-height:320px;overflow:hidden}
+@media(max-width:900px){aside{position:static;height:300px}}
+aside h2{padding:10px 12px 0;margin:0;color:#fff}#log{flex:1;overflow:auto;padding:8px 12px;font:12px/1.6 'JetBrains Mono',ui-monospace,monospace}#log div{opacity:.95}#log .er{color:#ff8a8f}#log .wn{color:#ffc266}#log b{color:#fff;font-weight:400}
+.chips{display:flex;flex-wrap:wrap;gap:5px;padding:8px 12px;border-top:1px solid #ffffff1f}.chips span{font-size:11px;padding:1px 7px;border-radius:99px;border:1px solid #ffffff2e;opacity:.5}.chips span.f{opacity:1;background:var(--ac);border-color:var(--ac);color:#fff}
+dialog{border:1px solid var(--ln);border-radius:12px;background:var(--p);color:var(--ink);max-width:380px;width:90%}dialog::backdrop{background:#0008}
+</style></head><body>
+<header><h1>AutoOps Command Center</h1><span><i class="dot" id="hd"></i><span id="ht">All systems operational</span></span><span class="sp"></span>
+<div class="cov"><div class="bar"><i id="cb"></i></div><span id="cn">0/26</span> automations fired</div>
+<label style="margin:0;display:flex;gap:5px;align-items:center;font-size:12px"><input type="checkbox" id="err" style="width:auto"> Inject API fault</label>
+<button class="pr" onclick="demo()" id="dm">Run full demo</button><button onclick="ps2.showModal()" id="sb">Settings</button><button onclick="th()" aria-label="Toggle theme">Theme</button></header>
+<nav id="nav"></nav>
+<div class="wrap"><main><div id="pipe">Pipeline view: run any action and watch each tool in the chain light up.</div>
+
+<section class="pn" id="t0">
+<div class="c"><h2>Corporate inquiry</h2><div class="tag">n8n webhook · auto-responder · budget routing · CRM sync</div>
+<div class="row"><div><label>Company</label><input id="co" value="Lagos Logistics Ltd"></div><div><label>Role</label><input id="ro" value="Head of Operations"></div></div>
+<div class="row"><div><label>Budget (₦)</label><input id="bu" type="number" value="120000"></div><div><label>Timeline</label><select id="tl"><option>Urgent (2 weeks)</option><option>30 days</option><option>Exploring</option></select></div></div>
+<br><button class="pr" onclick="doInq()">Send inquiry</button><div class="out" id="o0"></div></div>
+
+<div class="c"><h2>Resume parser</h2><div class="tag">Drop a PDF/DOCX → Gemini Flash vision → JSON score → ATS sheet</div>
+<div id="drop" tabindex="0" role="button">Drag a CV here or click to browse<input type="file" id="fi" hidden accept=".pdf,.doc,.docx"></div>
+<br><button onclick="doCV('Amaka_Obi_CV.pdf',184000)">Use sample CV</button>
+<div class="row" id="o1" style="margin-top:10px"></div></div>
+
+<div class="c"><h2>Interview booking</h2><div class="tag">Cal.com booking.created → 24h + 1h SMS/WhatsApp reminders</div>
+<div class="slots" id="slots"></div><div class="out" id="o2"></div></div></section>
+
+<section class="pn" id="t1">
+<div class="c"><h2>Screening transcript</h2><div class="tag">Fathom/Otter webhook → summarizer → client-ready dossier</div>
+<textarea id="tr">Recruiter: Tell me about your automation background.
+Candidate (Amaka Obi): I've built about 30 workflows in n8n and Make.com for SMEs, plus Zapier for quick client wins. Last year I shipped a Vapi voice agent that screens applicants and a Paystack reconciliation flow that cut month-end close from 3 days to 4 hours.
+Recruiter: Availability and expectations?
+Candidate: I'm on a 2 weeks notice period and looking for ₦450k monthly. I'm strong on Airtable, Gemini, and webhooks, still growing on Retell.</textarea>
+<br><button class="pr" onclick="doTr()">Generate dossier</button></div>
+<div class="c"><h2>Candidate dossier</h2><div class="tag">Live-rendered client brief</div><div id="dos" style="color:var(--mut)">Run the transcript to render a dossier here.</div></div></section>
+
+<section class="pn" id="t2">
+<div class="c"><h2>Paystack test checkout</h2><div class="tag">charge.success → ledger · PDF invoice · onboarding invite</div>
+<div class="row"><div><label>Customer</label><input id="pc" value="Chidi Eze"></div><div><label>Amount (₦)</label><input id="pa" type="number" value="25000"></div></div>
+<br><button class="pr" onclick="pm.showModal()">Pay with Paystack (test)</button><div class="out" id="o3"></div></div>
+<div class="c"><h2>Inventory</h2><div class="tag">Drop an item below 10 to arm the daily 08:00 low-stock alert</div><table id="inv"></table><br><button onclick="doStock()">Run daily cron now</button></div>
+<div class="c" style="grid-column:1/-1"><h2>Invoice ledger and debt reminders</h2><div class="tag">Overdue items get the 7-day WhatsApp/SMS sequence</div><table id="led"></table><br><button onclick="doDebt()">Run overdue scan</button></div></section>
+
+<section class="pn" id="t3">
+<div class="c"><h2>FAQ chatbot</h2><div class="tag">Chatbase/Voiceflow widget · lead score → CRM status</div><div id="chat"><div class="m">Hi! Ask about pricing, booking, or voice agents.</div></div>
+<div class="row" style="margin-top:8px"><input id="ci" placeholder="Type a message"><button class="pr" onclick="doChat()">Send</button></div>
+<div class="row" style="margin-top:8px"><span>Lead score: <b id="ls">0</b></span><span id="lst" class="b">New</span></div></div>
+<div class="c"><h2>Voice agent console</h2><div class="tag">Vapi / Retell WebRTC + ElevenLabs voice</div>
+<div class="vis" id="vis"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="row"><span class="b" id="vs">Idle</span><button class="pr" onclick="doVoice()">Start call</button></div><div class="out" id="vt"></div></div>
+<div class="c"><h2>Outbound call request</h2><div class="tag">Form → Zapier/n8n → Vapi outbound API</div><label>Phone number</label><input id="ph" value="+234 803 000 0000"><br><br><button class="pr" onclick="doOut()">Call me now</button><div class="out" id="o4"></div></div></section>
+
+<section class="pn" id="t4">
+<div class="c"><h2>AI content studio</h2><div class="tag">Gemini → LinkedIn · X · Instagram → content calendar</div>
+<label>Topic</label><input id="tp" value="How AI automation saves SMEs 10 hours a week"><label>Tone</label><select id="tn"><option>confident</option><option>friendly</option><option>witty</option></select>
+<br><br><button class="pr" onclick="doCont()">Generate and schedule</button><div class="out" id="o5"></div></div>
+<div class="c"><h2>Content calendar</h2><div class="tag">Posts land here as they are scheduled</div><table id="cal"><tr><td style="color:var(--mut)">Nothing scheduled yet.</td></tr></table></div>
+<div class="c"><h2>Email auto-responder</h2><div class="tag">Gmail trigger → AI draft → drip progression</div><textarea id="em" style="min-height:70px">Hi, do you offer WhatsApp automation for a small pharmacy? What would it cost?</textarea><br><br><button class="pr" onclick="doEml()">Draft reply</button><div class="out" id="o6"></div></div></section>
+
+<section class="pn" id="t5">
+<div class="c"><h2>System health</h2><div class="tag">Error Trigger node demo</div><p>Tick <b>Inject API fault</b> in the header, then run any action. The log shows a 429, a retry with backoff, and recovery, so you can show reliability to clients.</p></div>
+<div class="c"><h2>Automation coverage</h2><div class="tag">Every automation the site can trigger</div><div id="cov" class="row" style="gap:5px"></div></div>
+<div class="c"><h2>Webhook contract</h2><div class="tag">What each form POSTs to n8n</div><div class="out" style="font:12px 'JetBrains Mono',monospace">POST {base}/webhook/{key}
+keys: inquiry, cv, booking, transcript,
+payment, stock, debt, chat, voice,
+outbound, content, email
+body: { source:"mock-site", ts, ...fields }
+Reply JSON: { status, score?, summary? }</div></div></section>
+</main>
+<aside><h2>Live activity log</h2><div id="log"></div><div class="chips" id="chips"></div></aside></div>
+
+<dialog id="pm"><h2>Paystack (test mode)</h2><p>Card 4084 0840 8408 4081 · any future date · CVV 408</p><div class="row"><button onclick="pm.close()">Cancel</button><button class="pr" onclick="pm.close();doPay()">Authorize payment</button></div></dialog>
+<dialog id="ps2"><h2>Go live with n8n</h2><p>By default every action is simulated. Host this file on Vercel/Netlify, paste your Railway base URL, and each action will also POST to your real webhooks.</p>
+<label>n8n base URL</label><input id="bs" placeholder="https://your-app.up.railway.app"><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="lv" style="width:auto"> Send real webhooks</label><br><button class="pr" onclick="sv()">Save</button></dialog>
+
+<script>
+const $=s=>document.querySelector(s),w=ms=>new Promise(r=>setTimeout(r,ms)),H=s=>[...s].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7);
+const AU={lead:'Lead auto-responder',route:'Budget routing',crm:'CRM sync',cv:'CV parsing',score:'Match scoring',ats:'ATS logging',book:'Interview booking',rem:'SMS/WA reminders',tr:'Meeting summarizer',dos:'Dossier builder',pay:'Payment reconciliation',led:'Ledger update',inv:'PDF invoice',onb:'Onboarding invite',stk:'Low-stock alert',debt:'Debt reminders',chat:'FAQ chatbot',qual:'Lead qualification',voice:'Voice screening',out:'Outbound call',cont:'Social content',sch:'Content scheduling',eml:'Email auto-draft',drip:'Drip progression',err:'Error recovery',post:'Post-call summary'};
+const F=new Set(),S={base:'',live:false};
+try{Object.assign(S,JSON.parse(localStorage.getItem('aoc')||'{}'))}catch(e){}
+$('#bs').value=S.base;$('#lv').checked=S.live;
+function sv(){S.base=$('#bs').value.trim().replace(/\/$/,'');S.live=$('#lv').checked;try{localStorage.setItem('aoc',JSON.stringify(S))}catch(e){}ps2.close();log('Config','Live mode '+(S.live?'ON':'OFF'))}
+function th(){const r=document.documentElement,d=matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=(r.dataset.theme||(d?'dark':'light'))==='dark'?'light':'dark'}
+$('#cov').innerHTML=$('#chips').innerHTML=Object.entries(AU).map(([k,v])=>`<span class="b" id="c_${k}" style="opacity:.55">${v}</span>`).join('');
+$('#chips').innerHTML=Object.entries(AU).map(([k,v])=>`<span id="k_${k}">${v}</span>`).join('');
+function fire(k){if(!AU[k]||F.has(k))return;F.add(k);$('#k_'+k).classList.add('f');const c=$('#c_'+k);c.style.opacity=1;c.classList.add('ok');$('#cn').textContent=F.size+'/'+Object.keys(AU).length;$('#cb').style.width=F.size/Object.keys(AU).length*100+'%'}
+function log(t,m,l=''){const d=document.createElement('div');d.className=l;d.innerHTML=`[${new Date().toLocaleTimeString('en-GB')}] <b>${t}</b> ${m}`;$('#log').append(d);$('#log').scrollTop=1e9}
+function health(ok){$('#hd').className='dot'+(ok?'':' err');$('#ht').textContent=ok?'All systems operational':'Error caught, retrying'}
+async function hit(k,p){try{const r=await fetch(S.base+'/webhook/'+k,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'mock-site',ts:Date.now(),...p})});log('n8n','Webhook '+k+' → HTTP '+r.status);return await r.json()}catch(e){log('n8n','Live call failed, using simulation','wn');return null}}
+async function run(k,ids,steps,p={}){const pp=$('#pipe');pp.innerHTML=steps.map((s,i)=>`<span class="node" id="n${i}">${s[0]}</span>`).join('<span>→</span>');let live=null;
+for(let i=0;i<steps.length;i++){$('#n'+i).className='node on';
+if(i==0&&S.live&&S.base)live=await hit(k,p);
+if(i==1&&$('#err').checked){health(0);log(steps[i][0],'429 rate limit hit','er');await w(900);log('Error Trigger','Retry with backoff (2s) → recovered','wn');health(1);fire('err')}
+await w(520);log(steps[i][0],steps[i][1]);$('#n'+i).className='node done'}
+ids.forEach(fire);return live}
+const tabs=['Recruitment','AI intelligence','Commerce','Chat and voice','Marketing','Logs and health'];
+$('#nav').innerHTML=tabs.map((t,i)=>`<button data-i="${i}" onclick="go(${i})">${t}</button>`).join('');
+function go(i){document.querySelectorAll('.pn').forEach((e,j)=>e.classList.toggle('on',i==j));document.querySelectorAll('nav button').forEach((e,j)=>e.classList.toggle('on',i==j))}go(0);
+
+async function doInq(){const b=+$('#bu').value,hi=b>=50000,co=$('#co').value;
+await run('inquiry',['lead','route','crm'],[['Webhook','Inquiry received from '+co],['Gemini','Drafted personalised reply'],['Router','Budget ₦'+b.toLocaleString()+(hi?' ≥ ₦50k → priority lane':' < ₦50k → nurture lane')],['Airtable','Lead record created'],['Gmail','Auto-responder sent']],{company:co,budget:b});
+$('#o0').textContent=hi?'Priority lead. Senior recruiter alerted on Slack and a reply is in their inbox.':'Added to the nurture drip. Reply sent with a self-serve booking link.'}
+const dz=$('#drop'),fi=$('#fi');dz.onclick=()=>fi.click();dz.onkeydown=e=>e.key=='Enter'&&fi.click();
+dz.ondragover=e=>{e.preventDefault();dz.classList.add('h')};dz.ondragleave=()=>dz.classList.remove('h');
+dz.ondrop=e=>{e.preventDefault();dz.classList.remove('h');const f=e.dataTransfer.files[0];f&&doCV(f.name,f.size)};fi.onchange=()=>fi.files[0]&&doCV(fi.files[0].name,fi.files[0].size);
+async function doCV(n,sz){const sc=68+H(n+sz)%30,sk=['n8n','Make.com','Zapier','Airtable','Vapi','Webhooks','Python','Paystack'].filter((_,i)=>(H(n)>>i)&1).slice(0,4);if(sk.length<3)sk.push('n8n','Webhooks');
+const r=await run('cv',['cv','score','ats'],[['Webhook',n+' ('+Math.round(sz/1024)+' KB) received'],['Gemini Flash','Parsed PDF natively → JSON'],['Scorer','Match score: '+sc+'%'],['Google Sheets','Candidate row appended']],{file:n});
+const s=r?.score??sc,C=2*Math.PI*34;
+$('#o1').innerHTML=`<svg class="ring" viewBox="0 0 84 84"><circle cx="42" cy="42" r="34" fill="none" stroke="var(--ln)" stroke-width="8"/><circle cx="42" cy="42" r="34" fill="none" stroke="var(--ac)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C*s/100} ${C}" transform="rotate(-90 42 42)"/><text x="42" y="49" text-anchor="middle">${s}</text></svg><div class="out" style="display:block;flex:1;font:12px 'JetBrains Mono',monospace">{"candidate":"${n.split('_').slice(0,2).join(' ')}",\n "top_skills":${JSON.stringify(sk)},\n "years_experience":${3+H(n)%6},\n "match_score":${s}}</div>`}
+const SL=['Mon 10:00','Mon 14:00','Tue 09:30','Tue 15:00','Wed 11:00','Thu 16:30'];$('#slots').innerHTML=SL.map(s=>`<button onclick="doBook('${s}',this)">${s}</button>`).join('');
+async function doBook(s,el){document.querySelectorAll('#slots button').forEach(b=>b.classList.remove('on'));el&&el.classList.add('on');
+await run('booking',['book','rem'],[['Cal.com','booking.created · '+s],['Google Calendar','Event + Meet link created'],['Termii','SMS reminder queued: T-24h'],['WhatsApp API','Reminder queued: T-1h']],{slot:s});$('#o2').textContent='Booked for '+s+'. Confirmation sent; reminders will fire 24 hours and 1 hour before.'}
+async function doTr(){const t=$('#tr').value,K=['n8n','Make.com','Zapier','Airtable','Gemini','Vapi','Retell','Paystack','webhooks'],st=K.filter(k=>t.toLowerCase().includes(k.toLowerCase())),nm=(t.match(/Candidate \(([^)]+)\)/)||[0,'Candidate'])[1],sal=(t.match(/₦\s?[\d,]+k?/)||['not stated'])[0],nt=(t.match(/(\d+)\s*weeks?/)||[0,'?'])[1];
+await run('transcript',['tr','dos'],[['Fathom','Transcript webhook received'],['Gemini','Summarised '+t.split(/\s+/).length+' words'],['Formatter','Dossier built'],['Webhook','Pushed to client portal']],{transcript:t});
+$('#dos').innerHTML=`<h2 style="margin-bottom:2px">${nm}</h2><div class="b ok">Recommended for interview</div><h3>Strengths</h3>${st.slice(0,6).map(s=>`<span class="b" style="margin-right:4px">${s}</span>`).join('')||'None detected'}<h3>Impact</h3><p style="margin:0">Cut month-end reconciliation from 3 days to 4 hours; shipped a voice screening agent.</p><h3>Logistics</h3><p style="margin:0">Notice: ${nt} weeks · Expectation: ${sal}/month</p><h3>Watch-outs</h3><p style="margin:0">${/still growing on (\w+)/.test(t)?'Still developing on '+t.match(/still growing on (\w+)/)[1]+'.':'None flagged.'}</p>`}
+
+const INV=[['Wireless routers',14],['SIM packs',8],['Power banks',22],['POS rolls',31]];
+function rInv(){$('#inv').innerHTML='<tr><th>Item</th><th>Qty</th><th></th></tr>'+INV.map((r,i)=>`<tr><td>${r[0]}</td><td>${r[1]} ${r[1]<10?'<span class="b er">low</span>':''}</td><td><button onclick="adj(${i},-1)">−</button> <button onclick="adj(${i},1)">+</button></td></tr>`).join('')}
+function adj(i,d){INV[i][1]=Math.max(0,INV[i][1]+d);log('Sheets',INV[i][0]+' → '+INV[i][1]);rInv()}rInv();
+async function doStock(){const lo=INV.filter(r=>r[1]<10);await run('stock',['stk'],[['Cron','08:00 daily trigger'],['Sheets','Read '+INV.length+' rows · '+lo.length+' below 10'],['Termii','SMS: '+(lo.map(r=>r[0]).join(', ')||'no alerts needed')]],{low:lo})}
+const LED=[['INV-101','Ada Foods',48000,'Paid'],['INV-102','Bello Tech',72000,'Overdue'],['INV-103','Kemi Styles',15500,'Unpaid'],['INV-104','Zenith Farms',90000,'Overdue']];
+function rLed(){$('#led').innerHTML='<tr><th>Invoice</th><th>Customer</th><th>₦</th><th>Status</th></tr>'+LED.map((r,i)=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2].toLocaleString()}</td><td><select onchange="LED[${i}][3]=this.value;rLed()">${['Unpaid','Paid','Overdue'].map(s=>`<option ${s==r[3]?'selected':''}>${s}</option>`).join('')}</select></td></tr>`).join('')}rLed();
+async function doPay(){const c=$('#pc').value,a=+$('#pa').value,id='INV-'+(105+LED.length-4);
+await run('payment',['pay','led','inv','onb'],[['Paystack','charge.success · ₦'+a.toLocaleString()],['Reconciler','Matched to order for '+c],['Sheets','Ledger row '+id+' marked Paid'],['PDF Engine','Invoice '+id+'.pdf generated'],['Telegram','Onboarding invite sent']],{customer:c,amount:a});
+LED.push([id,c,a,'Paid']);rLed();$('#o3').textContent='Payment confirmed. Invoice '+id+' emailed and a Telegram invite sent to '+c+'.'}
+async function doDebt(){const o=LED.filter(r=>r[3]=='Overdue');await run('debt',['debt'],[['Cron','Overdue scan started'],['Sheets',o.length+' overdue invoices found'],['WhatsApp API',o.length?'7-day reminders sent to '+o.map(r=>r[1]).join(', '):'Nothing to send']],{overdue:o})}
+
+let LS=0;
+async function doChat(t){const i=$('#ci'),v=t||i.value.trim();if(!v)return;i.value='';const c=$('#chat');c.insertAdjacentHTML('beforeend',`<div class="m u"></div>`);c.lastChild.textContent=v;
+const kb=[[/price|cost|₦|fee|how much/,'Retainers start at ₦150k/month. Want a tailored quote?',35],[/book|call|demo|schedule/,'Happy to book you in. Pick a slot on the Recruitment tab.',35],[/voice|vapi|agent/,'Our voice agents screen candidates around the clock using Vapi and ElevenLabs.',20],[/./,'I can help with pricing, booking, voice agents, and recruitment automation.',8]],k=kb.find(x=>x[0].test(v.toLowerCase()));
+LS=Math.min(100,LS+k[2]);await w(450);c.insertAdjacentHTML('beforeend',`<div class="m"></div>`);c.lastChild.textContent=k[1];c.scrollTop=1e9;$('#ls').textContent=LS;const st=LS>=70?'Qualified':LS>=35?'Interested':'New';$('#lst').textContent=st;$('#lst').className='b '+(st=='Qualified'?'ok':st=='Interested'?'wn':'');
+await run('chat',['chat'].concat(LS>=70?['qual']:[]),[['Chatbase','Intent matched'],['Scorer','Lead score '+LS],['CRM','Status → '+st]],{msg:v})}
+$('#ci').onkeydown=e=>e.key=='Enter'&&doChat();
+let vb=0;async function doVoice(){if(vb)return;vb=1;const vs=$('#vs'),vi=$('#vis'),vt=$('#vt');vt.textContent='';vs.textContent='Connecting…';
+const p=run('voice',['voice','post'],[['Vapi','WebRTC call connected'],['ElevenLabs','Voice stream live'],['Retell','Post-call webhook: transcript and sentiment'],['n8n','Summary saved to dossier']],{});
+await w(900);vs.textContent='Agent speaking';vi.classList.add('go');
+for(const l of ['Agent: Hi, this is Ada from Lagos Talent. Do you have two minutes?','Caller: Sure, I applied for the operations role.','Agent: Great. What automation tools have you shipped with?','Caller: n8n and Make, plus a Vapi agent last quarter.']){vt.textContent+=l+'\n';await w(1100)}
+vi.classList.remove('go');vs.textContent='Call ended';await p;vt.textContent+='\nSummary: Qualified. Sentiment positive. Action: book interview.';vb=0}
+async function doOut(){await run('outbound',['out'],[['Webhook','Call request for '+$('#ph').value],['Zapier','Routed to outbound flow'],['Vapi','Dialling…'],['Vapi','Call completed · 1m 42s']],{phone:$('#ph').value});$('#o4').textContent='Call placed. The transcript will appear in the log when it ends.'}
+
+const CAL=[];
+async function doCont(){const t=$('#tp').value,tn=$('#tn').value;await run('content',['cont','sch'],[['Webhook','Brief received'],['Gemini','Wrote LinkedIn, X, and Instagram versions'],['Notion','Calendar entries created'],['Buffer','3 posts scheduled']],{topic:t,tone:tn});
+const P=[['LinkedIn',`${t}.\n\nMost SMEs lose hours to repetitive work. A ${tn} look at what to automate first: leads, invoices, follow-ups.`],['X',`1/ ${t}\n2/ Start with the task you repeat daily.\n3/ Automate it. Reclaim the hour.`],['Instagram',`${t} ✨ Save this for your next workflow audit. #automation #sme`]];
+$('#o5').textContent=P.map(p=>p[0]+':\n'+p[1]).join('\n\n');P.forEach((p,i)=>CAL.push([`Day +${CAL.length+1} · 09:00`,p[0],t.slice(0,32)+'…']));
+$('#cal').innerHTML=CAL.map(r=>`<tr><td>${r[0]}</td><td><span class="b">${r[1]}</span></td><td>${r[2]}</td></tr>`).join('')}
+async function doEml(){const q=$('#em').value;await run('email',['eml','drip'],[['Gmail','New inquiry email'],['Gemini','Reply drafted'],['n8n','Drip step 2 of 5 scheduled']],{email:q});
+$('#o6').textContent='Draft reply:\n\nHi there, thanks for reaching out. Yes, we automate WhatsApp for small businesses, from order updates to FAQs. Packages start at ₦150k/month. Can I share a 10 minute walkthrough this week?\n\nNext: follow-up email in 2 days.'}
+
+async function demo(){const b=$('#dm');b.disabled=true;b.textContent='Running…';
+go(0);await doInq();await doCV('Amaka_Obi_CV.pdf',184000);await doBook(SL[2]);
+go(1);await doTr();
+go(2);await doPay();await doStock();await doDebt();
+go(3);await doChat('How much does it cost?');await doChat('Can I book a demo?');await doOut();
+go(4);await doCont();await doEml();
+go(5);b.disabled=false;b.textContent='Run full demo';log('Demo','Complete: '+F.size+' automations fired')}
+log('System','Command center ready. Simulation mode.');
+</script></body></html>

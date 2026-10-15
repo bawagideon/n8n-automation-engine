@@ -1,0 +1,121 @@
+{
+  "name": "Low-stock alert",
+  "nodes": [
+    {
+      "name": "Every day at 8am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "triggerAtHour": 8 }
+          ]
+        }
+      },
+      "notes": "An automated cron timer initiates the warehouse inventory check every morning."
+    },
+    {
+      "name": "Read stock sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [220, 0],
+      "parameters": {
+        "operation": "getAll",
+        "sheetName": "Inventory"
+      },
+      "notes": "Queries the database or Google Sheet for latest unit quantities across all SKUs."
+    },
+    {
+      "name": "Anything below 10?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [440, 0],
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$json.quantity}}",
+              "operation": "smaller",
+              "value2": 10
+            }
+          ]
+        }
+      },
+      "notes": "Evaluates whether any inventory items have dropped beneath the danger reorder threshold."
+    },
+    {
+      "name": "Text manager to reorder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [660, -60],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.ng.termii.com/api/sms/send",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"to\": \"2348030000000\",\n  \"from\": \"AutoOps\",\n  \"sms\": \"LOW STOCK WARNING: SKU '{{$json.item}}' only has {{$json.quantity}} units left. Reorder immediately.\",\n  \"type\": \"plain\",\n  \"channel\": \"generic\"\n}"
+      },
+      "notes": "Sends urgent SMS alert to the operations lead listing exact SKUs to replenish."
+    },
+    {
+      "name": "Do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [660, 60],
+      "parameters": {},
+      "notes": "Stock levels are healthy. No notification needed, saving SMS credits."
+    }
+  ],
+  "connections": {
+    "Every day at 8am": {
+      "main": [
+        [
+          { "node": "Read stock sheet", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Read stock sheet": {
+      "main": [
+        [
+          { "node": "Anything below 10?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Anything below 10?": {
+      "main": [
+        [
+          { "node": "Text manager to reorder", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Do nothing", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "meta": {
+    "autoops": {
+      "cat": "Operations",
+      "covers": ["stk"],
+      "plain": {
+        "what": "Monitors stock levels every morning and alerts management via SMS if inventory runs low.",
+        "when": "Runs autonomously every day at 08:00 AM.",
+        "result": "Zero stockouts and instant alerts for items requiring replenishment.",
+        "saves": "30 minutes of manual daily warehouse stock counting"
+      },
+      "take": { "Anything below 10?": 0 },
+      "sample": {
+        "Every day at 8am": "Cron scheduler fired at 08:00 UTC",
+        "Read stock sheet": "Retrieved 4 inventory items (SIM packs: 8 units remaining)",
+        "Anything below 10?": "SIM packs count (8) < threshold (10) → triggered reorder branch",
+        "Text manager to reorder": "Termii SMS dispatched: 'Reorder SIM packs immediately'"
+      },
+      "live": { "key": "stock", "mode": "respond" },
+      "toolNotes": {
+        "n8n": "Best choice: schedule triggers run 24/7 on Railway with zero polling quota costs.",
+        "make": "Free tier restricts scheduling intervals and burns ops on every empty sheet scan.",
+        "zapier": "Scheduled Zaps cost expensive tasks even when no reorder condition is met."
+      }
+    }
+  }
+}

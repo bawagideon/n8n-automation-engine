@@ -1,0 +1,119 @@
+{
+  "name": "CV scorer",
+  "nodes": [
+    {
+      "name": "CV uploaded",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cv",
+        "responseMode": "responseNode"
+      },
+      "notes": "A candidate drops their resume PDF or DOCX on your site."
+    },
+    {
+      "name": "Gemini reads the CV",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [220, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [{\n    \"parts\": [\n      {\"text\": \"Evaluate this resume against Senior Automation Specialist. Return JSON with candidate_name, top_skills, years_experience, match_score (0-100), and summary.\"}\n    ]\n  }],\n  \"generationConfig\": { \"response_mime_type\": \"application/json\" }\n}"
+      },
+      "notes": "AI reads the full document natively and evaluates qualifications."
+    },
+    {
+      "name": "Extract score and skills",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0],
+      "parameters": {
+        "jsCode": "const res = JSON.parse($input.first().json.candidates[0].content.parts[0].text);\nreturn [{ json: res }];"
+      },
+      "notes": "Cleans the AI score and top competencies into structured fields."
+    },
+    {
+      "name": "Log candidate to ATS",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [660, 0],
+      "parameters": {
+        "operation": "append",
+        "sheetName": "Candidates",
+        "options": {}
+      },
+      "notes": "Name, skills, and match score are automatically stored in the tracking sheet."
+    },
+    {
+      "name": "Show score on site",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [880, 0],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{JSON.stringify($json)}}"
+      },
+      "notes": "The candidate match score and summary render instantly on screen."
+    }
+  ],
+  "connections": {
+    "CV uploaded": {
+      "main": [
+        [
+          { "node": "Gemini reads the CV", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Gemini reads the CV": {
+      "main": [
+        [
+          { "node": "Extract score and skills", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Extract score and skills": {
+      "main": [
+        [
+          { "node": "Log candidate to ATS", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Log candidate to ATS": {
+      "main": [
+        [
+          { "node": "Show score on site", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "meta": {
+    "autoops": {
+      "cat": "Recruitment",
+      "covers": ["cv", "score", "ats"],
+      "plain": {
+        "what": "Reads candidate CVs natively with multimodal AI and calculates job match score.",
+        "when": "A candidate drops their resume on your intake dropzone.",
+        "result": "A verified score out of 100, identified core skills, and an updated ATS sheet.",
+        "saves": "About 15 minutes per candidate resume"
+      },
+      "sample": {
+        "CV uploaded": "Amaka_Obi_CV.pdf (184 KB) received",
+        "Gemini reads the CV": "Parsed PDF via Gemini 2.0 Flash Vision with JSON schema enforcement",
+        "Extract score and skills": "Extracted match score: 88%. Skills: n8n, Make.com, Vapi, Paystack",
+        "Log candidate to ATS": "Appended record to Google Sheets / Airtable ATS",
+        "Show score on site": "Returned score 88 and skills to the interactive score ring"
+      },
+      "live": { "key": "cv", "mode": "respond" },
+      "toolNotes": {
+        "n8n": "Best choice: accepts raw PDF binary buffers directly without 3rd-party OCR converters.",
+        "make": "Requires a Google Drive / PDF extraction module before passing text to OpenAI.",
+        "zapier": "Limited file size handling and costly AI step add-ons."
+      }
+    }
+  }
+}

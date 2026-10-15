@@ -1,0 +1,129 @@
+{
+  "name": "Debt reminders",
+  "nodes": [
+    {
+      "name": "Scan overdue ledger daily",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "triggerAtHour": 9 }
+          ]
+        }
+      },
+      "notes": "Cron schedule triggers an automated overdue audit every morning at 9:00 AM."
+    },
+    {
+      "name": "Find invoices overdue > 7 days",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [220, 0],
+      "parameters": {
+        "operation": "getAll",
+        "sheetName": "Ledger"
+      },
+      "notes": "Pulls all unpaid accounts where due date has lapsed past 7 days."
+    },
+    {
+      "name": "Are there overdue invoices?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [440, 0],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.status}}",
+              "operation": "equal",
+              "value2": "Overdue"
+            }
+          ]
+        }
+      },
+      "notes": "Filters out paid and current invoices, isolating only accounts in arrears."
+    },
+    {
+      "name": "Send WhatsApp debt reminder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [660, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v19.0/messages",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"{{$json.phone}}\",\n  \"type\": \"text\",\n  \"text\": { \"body\": \"Hello {{$json.customer}}, gentle reminder that invoice {{$json.invoice_id}} (₦{{$json.amount}}) is past due. Pay securely here: https://paystack.com/pay/demo\" }\n}"
+      },
+      "notes": "Sends polite, compliant WhatsApp reminders with direct 1-click Paystack payment links."
+    },
+    {
+      "name": "Log reminder in ledger",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [880, 0],
+      "parameters": {
+        "operation": "update",
+        "sheetName": "Ledger"
+      },
+      "notes": "Updates last contacted date and reminder count on the client record."
+    }
+  ],
+  "connections": {
+    "Scan overdue ledger daily": {
+      "main": [
+        [
+          { "node": "Find invoices overdue > 7 days", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Find invoices overdue > 7 days": {
+      "main": [
+        [
+          { "node": "Are there overdue invoices?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Are there overdue invoices?": {
+      "main": [
+        [
+          { "node": "Send WhatsApp debt reminder", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Send WhatsApp debt reminder": {
+      "main": [
+        [
+          { "node": "Log reminder in ledger", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "meta": {
+    "autoops": {
+      "cat": "Finance",
+      "covers": ["debt"],
+      "plain": {
+        "what": "Scans accounts receivable daily and dispatches automated WhatsApp reminders for overdue balances.",
+        "when": "Runs automatically every weekday at 09:00 AM.",
+        "result": "Dramatically reduces late payment cycles while preserving client goodwill.",
+        "saves": "Recovers unpaid revenue 4x faster without awkward phone calls"
+      },
+      "take": { "Are there overdue invoices?": 0 },
+      "sample": {
+        "Scan overdue ledger daily": "Daily receivables audit initiated",
+        "Find invoices overdue > 7 days": "Identified 2 overdue accounts: Bello Tech (₦72,000), Zenith Farms (₦90,000)",
+        "Are there overdue invoices?": "2 overdue accounts isolated for communication",
+        "Send WhatsApp debt reminder": "WhatsApp reminder dispatched with embedded Paystack link",
+        "Log reminder in ledger": "Ledger updated with reminder timestamp and sequence step 1"
+      },
+      "live": { "key": "debt", "mode": "respond" },
+      "toolNotes": {
+        "n8n": "Best choice: loop over array of debtors with built-in rate-limiting delays to protect WhatsApp sender reputation.",
+        "make": "Iterators and aggregators in Make require precise error handling when debtor lists are empty.",
+        "zapier": "Looping by Zapier is awkward and hits step limits quickly."
+      }
+    }
+  }
+}

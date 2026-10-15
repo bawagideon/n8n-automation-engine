@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AutoOps Command Center — Interactive AI & Automation Showcase</title>
+  <meta name="description" content="Production AI and business automation command center. Watch real n8n workflows execute step-by-step, inspect visual flows, and copy importable blueprints.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+
+  <!-- Sticky Global Header -->
+  <header>
+    <div class="brand">
+      <span class="brand-badge">AutoOps</span>
+      <h1>Command Center</h1>
+    </div>
+
+    <div class="status-indicator">
+      <i class="dot" id="hd"></i>
+      <span id="ht">All systems operational</span>
+    </div>
+
+    <span class="sp"></span>
+
+    <div class="cov">
+      <div class="bar"><i id="cb"></i></div>
+      <span id="cn">0/26</span> automations fired
+    </div>
+
+    <label style="margin:0;display:flex;gap:6px;align-items:center;font-size:12.5px;cursor:pointer;">
+      <input type="checkbox" id="fault-toggle" style="width:auto;cursor:pointer;">
+      Inject API fault (429 test)
+    </label>
+
+    <button class="pr" id="btn-run-all-demo">▶ Run full demo</button>
+    <button id="btn-open-add-modal" style="font-size:12.5px;">+ Drop JSON</button>
+    <button id="btn-open-settings" style="font-size:12.5px;">Settings</button>
+    <button id="btn-toggle-theme" aria-label="Toggle theme" style="font-size:12.5px;">Theme</button>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav id="nav">
+    <button class="on" data-target="0">Recruitment Operations</button>
+    <button data-target="1">AI Screening & Intelligence</button>
+    <button data-target="2">SME Commerce & Finance</button>
+    <button data-target="3">Conversational & Voice AI</button>
+    <button data-target="4">Marketing & Social Engine</button>
+    <button data-target="5">System Health & Architecture</button>
+  </nav>
+
+  <!-- Proof & Transparency Banner -->
+  <div class="proof-banner">
+    <div>
+      <b>⚡ Production Portfolio:</b> Every action below triggers an executable automation pipeline. Non-technical buyers get the plain-English <b>Story</b> view; automation engineers get the <b>importable n8n blueprint</b>.
+    </div>
+    <div>
+      <span class="b ok">Tool-Agnostic: n8n · Make · Zapier</span>
+    </div>
+  </div>
+
+  <!-- Main Grid Wrapper -->
+  <div class="wrap">
+    <main>
+
+      <!-- Active Pipeline Strip -->
+      <div id="pipe">
+        <span class="pipe-title">Pipeline View:</span>
+        <span style="font-size:13px;color:var(--mut);">Run any action or testbed module to watch the live node pipeline stream here.</span>
+      </div>
+
+      <!-- Tab 0: Recruitment Operations Suite -->
+      <section class="pn on" id="tab-0">
+        <!-- Card 1: Corporate Inquiry -->
+        <div class="c">
+          <div class="c-head">
+            <div>
+              <h2>Corporate Inquiry Portal</h2>
+              <div class="tag">n8n webhook · budget router · Slack alert · CRM sync</div>
+            </div>
+            <button class="btn-inspect" id="inspect-inq">Inspect Workflow ↗</button>
+          </div>
+          <div class="row">
+            <div>
+              <label>Company Name</label>
+              <input id="inq-co" value="Lagos Logistics Ltd">
+            </div>
+            <div>
+              <label>Role to Fill</label>
+              <input id="inq-ro" value="Head of Operations">
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>Budget (₦)</label>
+              <input id="inq-bu" type="number" value="120000">
+            </div>
+            <div>
+              <label>Timeline</label>
+              <select id="inq-tl">
+                <option>Urgent (&lt; 2 weeks)</option>
+                <option>30 days</option>
+                <option>Exploring / Pipeline</option>
+              </select>
+            </div>
+          </div>
+          <br>
+          <button class="pr" id="btn-inq">Send Inquiry</button>
+          <div class="out" id="out-inq"></div>
+        </div>
+
+        <!-- Card 2: Resume Parser -->
+        <div class="c">
+          <div class="c-head">
+            <div>
+              <h2>Resume Multimodal Parser</h2>
+              <div class="tag">PDF upload → Gemini 2.0 Flash Vision → Structured JSON → ATS</div>
+            </div>
+            <button class="btn-inspect" id="inspect-cv">Inspect Workflow ↗</button>
+          </div>
+          <div id="cv-drop" class="dropzone" tabindex="0" role="button">
+            <b>Drag candidate CV (.pdf, .docx) here</b> or click to upload
+            <input type="file" id="cv-fi" hidden accept=".pdf,.doc,.docx">
+          </div>
+          <div style="margin-top:10px;display:flex;gap:8px;align-items:center;">
+            <button id="btn-sample-cv">Load Sample Candidate (Amaka Obi)</button>
+            <span style="font-size:11.5px;color:var(--mut);">Zero manual data entry</span>
+          </div>
+          <div class="row" id="out-cv" style="margin-top:12px;"></div>
+        </div>
+
+        <!-- Card 3: Interview Booking -->
+        <div class="c">
+          <div class="c-head">
+            <div>
+              <h2>Interview Booking & Reminders</h2>
+              <div class="tag">Cal.com booking.created → Google Meet → 24h & 1h SMS / WhatsApp</div>
+            </div>
+            <button class="btn-inspect" id="inspect-booking">Inspect Workflow ↗</button>
+          </div>
+          <label>Select an open interview slot:</label>
+          <div class="slots" id="booking-slots"></div>
+          <div class="out" id="out-booking"></div>
+        </div>
+      </section>
+
+      <!-- Tab 1: AI Screening & Intelligence Hub -->
+      <section class="pn" id="tab-1">
+        <!-- Card 1: Screening Transcript Simulator -->
+        <div class="c">
+          <div class="c-head">
+            <div>
+              <h2>Screening Transcript Simulator</h2>
+              <div class="tag">Fathom/Otter webhook → Gemini 2.0 Flash → Competency Dossier</div>
+            </div>
+            <button class="btn-inspect" id="inspect-tr">Inspect Workflow ↗</button>
+          </div>
+          <label>Recorded screening call dialogue:</label>
+          <textarea id="tr-input" style="min-height:130px;">Recruiter: Tell me about your background shipping automations for SMEs.
+Candidate (Amaka Obi): I've built over 30 production workflows across n8n and Make.com. Last year I shipped a Paystack automated ledger reconciler that cut month-end close from 3 days down to 4 hours, and deployed a Vapi AI voice agent handling 200 candidate screenings a week.
+Recruiter: What are your availability and salary expectations?
+Candidate: I am on a 2-week notice period and targeting ₦450k monthly. I am proficient in n8n webhooks, Airtable, and Gemini multimodal APIs.</textarea>
+          <br>
+          <button class="pr" id="btn-generate-dossier">Generate Dossier</button>
+        </div>
+
+        <!-- Card 2: Live Candidate Dossier -->
+        <div class="c">
+          <div class="c-head">
+            <div>
+              <h2>Executive Candidate Dossier</h2>
+              <div class="tag">Live-rendered client presentation brief</div>
+            </div>
+          </div>
+          <div id="dossier-output" style="color:var(--mut);">
+            Click "Generate Dossier" to run the extraction pipeline and render the candidate dossier here.
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 2: SME Commerce & Finance -->
+      <section class="pn" id="tab-2">
+        <!-- Card 1: Paystack Checkout -->
+        <div class="c">
+          <div class="c-head">
+            <div>
+              <h2>Paystack Test Checkout</h2>
+              <div class="tag">charge.success → Ledger update → PDF receipt → Onboarding invite</div>
+            </div>
+            <button class="btn-inspect" id="inspect-pay">Inspect Workflow ↗</button>
+          </div>
+          <div class="row">
+            <div>
+              <label>Customer Name</label>
+              <input id="pay-customer" value="Chidi Eze">
+            </div>
+            <div>
+              <label>Order Amount (₦)</label>
+              <input id="pay-amount" type="number" value="25000">
+            </div>
+          </div>
+          <br>
+          <button class="pr" id="btn-open-pay">Pay with Paystack (Test Card)</button>
+          <div class="out" id="out-pay"></div>
+        </div>
+
+        <!-- Card 2: Low-Stock Inventory -->
+        <div class="c">
+          <div class="c-head">
+            <div>
+              <h2>Warehouse Inventory Monitor</h2>
+              <div class="tag">Daily 08:00 cron → Google Sheets → Termii low-stock SMS alert</div>
+            </div>
+            <button class="btn-inspect" id="inspect-stock">Inspect Workflow ↗</button>
+          </div>
+          <p style="font-size:12.5px;color:var(--mut);margin:0 0 10px;">
+            Reduce any SKU under 10 units with the minus button to test the reorder alert condition:
+          </p>
+          <table id="table-inventory"></table>
+          <br>
+          <button id="btn-run-stock-cron">Run Daily Stock Cron Now</button>
+        </div>
+
+        <!-- Card 3: Invoices & Debt Reminders -->
+        <div class="c" style="grid-column: 1 / -1;">
+          <div class="c-head">
+            <div>
+              <h2>Receivables Ledger & Automated 7-Day Debt Reminders</h2>
+              <div class="tag">Accounts audit cron → Overdue filter → WhatsApp reminder sequence</div>
+            </div>
+            <button class="btn-inspect" id="inspect-debt">Inspect Workflow ↗</button>
+          </div>
+          <table id="table-ledger"></table>
+          <br>
+          <button id="btn-run-debt-scan">Run Overdue Debt Scan</button>
+        </div>
+      </section>
+
+      <!-- Tab 3: Conversational & Voice AI Sandbox -->
+      <section class="pn" id="tab-3">
+        <!-- Card 1: FAQ Chatbot -->
+        <div class="c">
+          <div class="c-head">
+            <div>
+              <h2>AI FAQ Chatbot & Lead Scorer</h2>
+              <div class="tag">Voiceflow / Chatbase logic → Intent scoring → CRM promotion</div>
+            </div>
+            <button class="btn-inspect" id="inspect-chat">Inspect Workflow ↗</button>
+          </div>
+          <div id="chat-messages">
+            <div class="m">Hi! I am the AutoOps virtual assistant. Ask me about our ₦150k retainers, booking a demo, or deploying voice agents.</div>
+          </div>
+          <div class="row" style="margin-top:10px;">
+            <input id="chat-input" placeholder="Type a message (e.g. How much does it cost?)...">
+            <button class="pr" id="btn-chat-send">Send</button>
+          </div>
+          <div class="row" style="margin-top:10px;">
+            <span>Lead Intent Score: <b id="chat-lead-score">0</b>/100</span>
+            <span>CRM Status: <span id="chat-lead-status" class="b">New</span></span>
+          </div>
+        </div>
+
+        <!-- Card 2: Voice Agent Console -->
+        <div class="c">
+          <div class="c-head">
+            <div>
+              <h2>WebRTC Voice Screening Console</h2>
+              <div class="tag">Vapi / Retell AI + ElevenLabs audio stream → Post-call sentiment</div>
+            </div>
+            <button class="btn-inspect" id="inspect-voice">Inspect Workflow ↗</button>
+          </div>
+          <div class="vis" id="voice-visualizer">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <div class="row">
+            <span class="b" id="voice-call-status">Idle</span>
+            <button class="pr" id="btn-start-voice-call">Start WebRTC Call</button>
+          </div>
+          <div class="out" id="voice-call-transcript" style="min-height:90px;font-family:'JetBrains Mono',monospace;font-size:11.5px;"></div>
+        </div>
+
+        <!-- Card 3: Outbound Call Request -->
+        <div class="c">
+          <div class="c-head">
+            <div>
+              <h2>Instant Outbound Call Request</h2>
+              <div class="tag">Form submit → Zapier/n8n webhook → Vapi Outbound API</div>
+            </div>
+            <button class="btn-inspect" id="inspect-outbound">Inspect Workflow ↗</button>
+          </div>
+          <label>Your Phone Number (with Country Code):</label>
+          <input id="outbound-phone" value="+234 803 000 0000">
+          <br><br>
+          <button class="pr" id="btn-request-outbound">Call Me Now</button>
+          <div class="out" id="out-outbound"></div>
+        </div>
+      </section>
+
+      <!-- Tab 4: Marketing & Social Engine -->
+      <section class="pn" id="tab-4">
+        <!-- Card 1: AI Content Studio -->
+        <div class="c">
+          <div class="c-head">
+            <div>
+              <h2>AI Content Studio</h2>
+              <div class="tag">Gemini 2.0 Flash → LinkedIn · X · Instagram → Notion Calendar</div>
+            </div>
+            <button class="btn-inspect" id="inspect-content">Inspect Workflow ↗</button>
+          </div>
+          <label>Campaign Topic / Idea:</label>
+          <input id="content-topic" value="How AI automation saves SMEs 10 hours a week">
+          <label>Brand Voice Tone:</label>
+          <select id="content-tone">
+            <option value="confident">Confident & Authoritative</option>
+            <option value="friendly">Friendly & Practical</option>
+            <option value="witty">Witty & Direct</option>
+          </select>
+          <br><br>
+          <button class="pr" id="btn-generate-content">Generate & Schedule Across Channels</button>
+          <div class="out" id="out-content-preview"></div>
+        </div>
+
+        <!-- Card 2: Content Calendar -->
+        <div class="c">
+          <div class="c-head">
+            <div>
+              <h2>Synced Editorial Calendar</h2>
+              <div class="tag">Notion database / Buffer queue synchronization</div>
+            </div>
+          </div>
+          <table id="table-calendar"></table>
+        </div>
+
+        <!-- Card 3: Email Auto-responder -->
+        <div class="c" style="grid-column: 1 / -1;">
+          <div class="c-head">
+            <div>
+              <h2>Inbound Email Auto-Responder & Drip</h2>
+              <div class="tag">Gmail webhook trigger → AI response draft → 5-step nurture drip</div>
+            </div>
+            <button class="btn-inspect" id="inspect-email">Inspect Workflow ↗</button>
+          </div>
+          <label>Simulated prospect email query:</label>
+          <textarea id="email-body-input" style="min-height:75px;">Hi there, do you offer WhatsApp automation for a growing pharmacy? What are your retainer costs?</textarea>
+          <br>
+          <button class="pr" id="btn-generate-email">Draft AI Reply & Arm Drip</button>
+          <div class="out" id="out-email-reply"></div>
+        </div>
+      </section>
+
+      <!-- Tab 5: System Health, Reliability & Architecture -->
+      <section class="pn" id="tab-5">
+        <!-- System Reliability -->
+        <div class="c">
+          <div class="c-head">
+            <div>
+              <h2>Reliability & Fault Recovery (Error Trigger)</h2>
+              <div class="tag">n8n Error Trigger node · 429 backoff retry · Slack incident ping</div>
+            </div>
+            <button class="btn-inspect" id="inspect-error">Inspect Workflow ↗</button>
+          </div>
+          <p style="font-size:13px;line-height:1.5;">
+            Enterprise automations must never fail silently. Tick <b>"Inject API fault"</b> in the top header, then run any module. The pipeline will simulate an upstream 429 rate limit, fire the recovery sequence, pause with exponential jitter, and restore operation smoothly.
+          </p>
+        </div>
+
+        <!-- Automation Coverage Matrix -->
+        <div class="c" style="grid-column: 1 / -1;">
+          <div class="c-head">
+            <div>
+              <h2>Full 26-Automation Architecture Coverage Matrix</h2>
+              <div class="tag">All core business operations triggered across the Command Center</div>
+            </div>
+          </div>
+          <div id="cov" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;"></div>
+        </div>
+
+        <!-- Dropzone for custom JSON -->
+        <div class="c" style="grid-column: 1 / -1;">
+          <div class="c-head">
+            <div>
+              <h2>Interactive JSON Blueprint Engine</h2>
+              <div class="tag">Drop any n8n workflow JSON with a meta.autoops block to generate an explained card</div>
+            </div>
+          </div>
+          <div id="engine-dropzone" class="dropzone" tabindex="0" role="button">
+            <b>Drop new .json workflow files here</b> or click to choose from your computer
+            <input type="file" id="engine-file-input" accept=".json" multiple hidden>
+          </div>
+          <textarea id="engine-paste-json" placeholder="Or paste raw n8n workflow JSON here..." style="margin-top:10px;min-height:90px;font-family:'JetBrains Mono',monospace;font-size:12px;"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
+            <button class="pr" id="btn-add-pasted-card">Generate Automation Card</button>
+            <span id="engine-msg" style="font-size:12.5px;"></span>
+          </div>
+          <div id="custom-cards-grid" class="card-grid" style="margin-top:16px;"></div>
+        </div>
+
+        <!-- Webhook API Contract -->
+        <div class="c" style="grid-column: 1 / -1;">
+          <div class="c-head">
+            <div>
+              <h2>Production Webhook Security Contract</h2>
+              <div class="tag">Vercel serverless proxy gateway specifications</div>
+            </div>
+          </div>
+          <div class="out" style="font:12px/1.6 'JetBrains Mono',monospace;">
+POST /api/hook/:key
+Headers: Content-Type: application/json, x-autoops-signature: &lt;optional&gt;
+Allowlist Keys: inquiry, cv, booking, transcript, payment, stock, debt, chat, voice, outbound, content, email, error
+Protection: Upstream n8n credentials shielded; IP rate limits enforced; Honeypot bot filtering active.
+          </div>
+        </div>
+      </section>
+
+      <!-- Conversion Section: Book Audit -->
+      <div class="audit-cta">
+        <div>
+          <h3>Need these systems built for your company?</h3>
+          <p>Book a free 20-minute operational audit. We identify your top 3 administrative bottlenecks and design the custom n8n/Make blueprint for your team.</p>
+        </div>
+        <div>
+          <button class="pr" id="btn-book-audit" style="padding:10px 18px;font-size:14px;">Book 20-Min Audit (Free)</button>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Sticky Live Activity Terminal -->
+    <aside>
+      <div class="aside-head">
+        <h2>Live Activity Terminal</h2>
+        <button class="btn-clear-log" id="btn-clear-log">Clear</button>
+      </div>
+      <div id="log"></div>
+      <div class="chips" id="chips"></div>
+    </aside>
+  </div>
+
+  <!-- Paystack Modal Dialog -->
+  <dialog id="modal-paystack">
+    <h2>Paystack Checkout (Test Mode)</h2>
+    <p style="font-size:13px;color:var(--mut);">
+      Card: <code>4084 0840 8408 4081</code> · Any future date · CVV <code>408</code>
+    </p>
+    <div style="background:var(--bg);padding:10px;border-radius:8px;margin:12px 0;font-size:13px;">
+      Simulating real-time <code>charge.success</code> webhook emission to n8n payment reconciler.
+    </div>
+    <div class="row">
+      <button onclick="document.getElementById('modal-paystack').close()">Cancel</button>
+      <button class="pr" id="btn-confirm-pay">Authorize ₦25,000 Payment</button>
+    </div>
+  </dialog>
+
+  <!-- Settings Modal Dialog -->
+  <dialog id="modal-settings">
+    <h2>Connect Production n8n</h2>
+    <p style="font-size:13px;color:var(--mut);">
+      By default, all pipelines run in rapid high-fidelity simulation mode. When deployed to Vercel, set your Railway backend to stream real live webhook responses.
+    </p>
+    <label>n8n Production Base URL</label>
+    <input id="settings-base-url" placeholder="https://primary-production-xxxx.up.railway.app">
+    <label style="display:flex;gap:8px;align-items:center;margin-top:10px;cursor:pointer;">
+      <input type="checkbox" id="settings-live-mode" style="width:auto;cursor:pointer;">
+      Dispatch real webhooks to live n8n backend
+    </label>
+    <br>
+    <div class="row">
+      <button onclick="document.getElementById('modal-settings').close()">Close</button>
+      <button class="pr" id="btn-save-settings">Save Configuration</button>
+    </div>
+  </dialog>
+
+  <!-- Fullscreen Workflow Inspector Drawer -->
+  <dialog id="workflow-drawer">
+    <div class="drawer-content"></div>
+  </dialog>
+
+  <!-- App Bootstrap JS -->
+  <script type="module">
+    import { bus } from './src/bus.js';
+    import { engine } from './src/engine.js';
+    import { initTheme } from './src/ui/theme.js';
+    import { initLog } from './src/ui/log.js';
+    import { initPipeline } from './src/ui/pipeline.js';
+    import { CoverageTracker } from './src/ui/coverage.js';
+    import { WorkflowDrawer } from './src/ui/drawer.js';
+    import { createCardElement } from './src/ui/cards.js';
+
+    import { initRecruitmentModule } from './src/modules/recruitment.js';
+    import { initIntelligenceModule } from './src/modules/intelligence.js';
+    import { initCommerceModule } from './src/modules/commerce.js';
+    import { initChatVoiceModule } from './src/modules/chatvoice.js';
+    import { initMarketingModule } from './src/modules/marketing.js';
+
+    // 1. Initialize Theme
+    const themeManager = initTheme();
+    document.getElementById('btn-toggle-theme').addEventListener('click', () => themeManager.toggle());
+
+    // 2. Initialize Log & Pipeline
+    initLog(document.getElementById('log'), document.getElementById('btn-clear-log'));
+    initPipeline(document.getElementById('pipe'));
+
+    // 3. Initialize Coverage Tracker
+    const coverage = new CoverageTracker({
+      barEl: document.getElementById('cb'),
+      countEl: document.getElementById('cn'),
+      chipsEl: document.getElementById('chips'),
+      covEl: document.getElementById('cov')
+    });
+
+    // 4. Initialize Drawer
+    const drawer = new WorkflowDrawer(document.getElementById('workflow-drawer'), engine);
+
+    // 5. Connect Settings
+    const modalSettings = document.getElementById('modal-settings');
+    const inputBaseUrl = document.getElementById('settings-base-url');
+    const checkLiveMode = document.getElementById('settings-live-mode');
+
+    const savedCfg = JSON.parse(localStorage.getItem('autoops_config') || '{}');
+    if (savedCfg.baseUrl) inputBaseUrl.value = savedCfg.baseUrl;
+    if (savedCfg.liveMode) checkLiveMode.checked = savedCfg.liveMode;
+    engine.setLiveConfig(savedCfg.baseUrl, savedCfg.liveMode);
+
+    document.getElementById('btn-open-settings').addEventListener('click', () => modalSettings.showModal());
+    document.getElementById('btn-save-settings').addEventListener('click', () => {
+      const baseUrl = inputBaseUrl.value.trim();
+      const liveMode = checkLiveMode.checked;
+      localStorage.setItem('autoops_config', JSON.stringify({ baseUrl, liveMode }));
+      engine.setLiveConfig(baseUrl, liveMode);
+      modalSettings.close();
+      bus.emit('log', {
+        source: 'Config',
+        message: `Live mode ${liveMode ? 'ACTIVATED' : 'OFF'} (${baseUrl || 'Local Proxy'})`,
+        level: 'wn'
+      });
+    });
+
+    // 6. Connect Fault Toggle & Health Light
+    const faultToggle = document.getElementById('fault-toggle');
+    faultToggle.addEventListener('change', () => {
+      engine.setFaultInjection(faultToggle.checked);
+      bus.emit('log', {
+        source: 'Fault Injector',
+        message: faultToggle.checked ? 'API fault injection ARMED (429 rate limit test on 2nd node)' : 'Fault injection DISARMED',
+        level: faultToggle.checked ? 'wn' : 'ok'
+      });
+    });
+
+    bus.on('run:fault', () => {
+      document.getElementById('hd').className = 'dot err';
+      document.getElementById('ht').textContent = 'Fault caught: retrying with backoff';
+    });
+
+    bus.on('run:fault:recovered', () => {
+      document.getElementById('hd').className = 'dot';
+      document.getElementById('ht').textContent = 'All systems operational (Recovered)';
+    });
+
+    bus.on('run:done', () => {
+      document.getElementById('hd').className = 'dot';
+      document.getElementById('ht').textContent = 'All systems operational';
+    });
+
+    // 7. Tab Navigation
+    const navButtons = document.querySelectorAll('nav#nav button');
+    const panels = document.querySelectorAll('.pn');
+    function selectTab(index) {
+      navButtons.forEach((b, i) => b.classList.toggle('on', i === index));
+      panels.forEach((p, i) => p.classList.toggle('on', i === index));
+    }
+    navButtons.forEach((btn, idx) => {
+      btn.addEventListener('click', () => selectTab(idx));
+    });
+
+    // Connect inspect button for Tab 5 error handler
+    const inspectErrorBtn = document.getElementById('inspect-error');
+    if (inspectErrorBtn) {
+      inspectErrorBtn.addEventListener('click', () => drawer.open('13-global-error-handler.json'));
+    }
+
+    // 8. Load all 13 Workflows from automations/*.json
+    const WORKFLOW_FILES = [
+      '01-lead-router.json',
+      '02-cv-scorer.json',
+      '03-interview-booking.json',
+      '04-transcript-dossier.json',
+      '05-payment-reconciler.json',
+      '06-low-stock-alert.json',
+      '07-debt-reminders.json',
+      '08-faq-chatbot-lead-score.json',
+      '09-voice-screening-postcall.json',
+      '10-outbound-call.json',
+      '11-content-studio.json',
+      '12-email-autoresponder-drip.json',
+      '13-global-error-handler.json'
+    ];
+
+    async function loadAllWorkflows() {
+      for (const file of WORKFLOW_FILES) {
+        try {
+          const resp = await fetch(`automations/${file}`);
+          if (resp.ok) {
+            const data = await resp.json();
+            engine.register(file, data);
+          }
+        } catch (e) {
+          console.warn(`Could not fetch automations/${file}:`, e);
+        }
+      }
+      bus.emit('log', {
+        source: 'Engine Registry',
+        message: `Registered ${engine.workflows.size} production n8n workflows with full Story/Flow/Blueprint schemas.`,
+        level: 'ok'
+      });
+    }
+    await loadAllWorkflows();
+
+    // 9. Wire Business Modules
+    const modRecruitment = initRecruitmentModule({
+      containerEl: document.getElementById('tab-0'),
+      engine,
+      drawer
+    });
+
+    const modIntelligence = initIntelligenceModule({
+      containerEl: document.getElementById('tab-1'),
+      engine,
+      drawer
+    });
+
+    const modCommerce = initCommerceModule({
+      containerEl: document.getElementById('tab-2'),
+      engine,
+      drawer,
+      paystackModalEl: document.getElementById('modal-paystack')
+    });
+
+    const modChatVoice = initChatVoiceModule({
+      containerEl: document.getElementById('tab-3'),
+      engine,
+      drawer
+    });
+
+    const modMarketing = initMarketingModule({
+      containerEl: document.getElementById('tab-4'),
+      engine,
+      drawer
+    });
+
+    // 10. Run Full Demo Button
+    const btnRunAll = document.getElementById('btn-run-all-demo');
+    btnRunAll.addEventListener('click', async () => {
+      btnRunAll.disabled = true;
+      btnRunAll.textContent = 'Running Full Sequence…';
+
+      bus.emit('log', {
+        source: 'Master Demo',
+        message: 'Starting automated 6-module comprehensive demonstration…',
+        level: 'wn'
+      });
+
+      try {
+        selectTab(0);
+        await modRecruitment.runDemoSequence();
+
+        selectTab(1);
+        await modIntelligence.runDemoSequence();
+
+        selectTab(2);
+        await modCommerce.runDemoSequence();
+
+        selectTab(3);
+        await modChatVoice.runDemoSequence();
+
+        selectTab(4);
+        await modMarketing.runDemoSequence();
+
+        selectTab(5);
+        bus.emit('log', {
+          source: 'Master Demo',
+          message: `All modules executed! Total coverage: ${coverage.fired.size}/26 automations verified.`,
+          level: 'ok'
+        });
+      } catch (err) {
+        console.error('Demo sequence error:', err);
+      } finally {
+        btnRunAll.disabled = false;
+        btnRunAll.textContent = '▶ Run full demo';
+      }
+    });
+
+    // 11. Custom JSON Dropzone / Paste Card Engine
+    const engineDropzone = document.getElementById('engine-dropzone');
+    const engineFileInput = document.getElementById('engine-file-input');
+    const enginePasteJson = document.getElementById('engine-paste-json');
+    const btnAddPasted = document.getElementById('btn-add-pasted-card');
+    const engineMsg = document.getElementById('engine-msg');
+    const customCardsGrid = document.getElementById('custom-cards-grid');
+
+    function handleNewWorkflowJson(jsonStr) {
+      let parsed;
+      try {
+        parsed = JSON.parse(jsonStr);
+      } catch (err) {
+        engineMsg.textContent = `Invalid JSON: ${err.message}`;
+        engineMsg.className = 'er';
+        return;
+      }
+
+      const errs = engine.validate(parsed);
+      if (errs.length > 0) {
+        engineMsg.textContent = errs.join(' ');
+        engineMsg.className = 'er';
+        return;
+      }
+
+      const key = `custom_${Date.now()}`;
+      engine.register(key, parsed);
+      const card = createCardElement(parsed, engine, { key });
+      customCardsGrid.prepend(card);
+
+      engineMsg.textContent = `✓ Added "${parsed.name}" to the interactive cards below!`;
+      engineMsg.className = 'ok';
+      if (enginePasteJson) enginePasteJson.value = '';
+    }
+
+    if (btnAddPasted) {
+      btnAddPasted.addEventListener('click', () => {
+        const val = enginePasteJson.value.trim();
+        if (val) handleNewWorkflowJson(val);
+      });
+    }
+
+    if (engineDropzone && engineFileInput) {
+      engineDropzone.addEventListener('click', () => engineFileInput.click());
+      engineDropzone.addEventListener('dragover', e => { e.preventDefault(); engineDropzone.classList.add('h'); });
+      engineDropzone.addEventListener('dragleave', () => engineDropzone.classList.remove('h'));
+      engineDropzone.addEventListener('drop', async e => {
+        e.preventDefault();
+        engineDropzone.classList.remove('h');
+        for (const f of e.dataTransfer.files) {
+          handleNewWorkflowJson(await f.text());
+        }
+      });
+      engineFileInput.addEventListener('change', async () => {
+        for (const f of engineFileInput.files) {
+          handleNewWorkflowJson(await f.text());
+        }
+      });
+    }
+
+    document.getElementById('btn-open-add-modal').addEventListener('click', () => {
+      selectTab(5);
+      engineDropzone.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    document.getElementById('btn-book-audit').addEventListener('click', () => {
+      selectTab(0);
+      document.getElementById('tab-0').scrollIntoView({ behavior: 'smooth' });
+      bus.emit('log', {
+        source: 'Booking Flow',
+        message: 'Directing visitor to Cal.com appointment slot selection.',
+        level: 'ok'
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "autoops-command-center",
+  "version": "2.0.0",
+  "description": "JSON-driven n8n automation showcase and interactive operations command center",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "n8n",
+    "automation",
+    "make",
+    "zapier",
+    "command-center",
+    "workflow-engine",
+    "portfolio"
+  ],
+  "author": "Gideon Bawa",
+  "license": "MIT"
+}
